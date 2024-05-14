@@ -53,8 +53,8 @@ app.get('/periodoAcademico', (req, res) => {
 
 
 app.post('/periodoAcademico', (req, res) => {
-    const { nombre, email, pass } = req.body;
-    connection.query('INSERT INTO usuarios (nombre, email, contrasena) VALUES (?, ?, ?)', [nombre, email, pass], (error, results) => {
+    const { nombre, fechaInicio, fechafin, estado } = req.body;
+    connection.query('INSERT INTO periodoacademico (nombre, fecha_inicio, fecha_final, estado) VALUES (?, ?, ?, ?)', [nombre, fechaInicio, fechafin, estado], (error, results) => {
         if (error) throw error;
         res.json({ message: 'Usuario creado', id: results.insertId });
     });
@@ -75,4 +75,8 @@ app.delete('/periodoAcademico/:id', (req, res) => {
         if (error) throw error;
         res.json({ message: 'Usuario eliminado' });
     });
+});
+
+app.listen(port, () => {
+    console.log(`Servidor iniciado en http://localhost:${port}`);
 });

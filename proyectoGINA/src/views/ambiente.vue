@@ -25,35 +25,17 @@ export default {
             this.showEliminarPeriodo = false;
             this.showConsultarPeriodo = false;
         },
-        editarPeriodo(){
-            this.showCrearPeriodo = false;
-            this.showEditarPeriodo = true;
-            this.showEliminarPeriodo = false;
-            this.showConsultarPeriodo = false;
-        },
-        eliminarPeriodo(){
-            this.showCrearPeriodo = false;
-            this.showEditarPeriodo = false;
-            this.showEliminarPeriodo = true;
-            this.showConsultarPeriodo = false;
-        },
-        consultarPeriodo(){
-            this.showCrearPeriodo = false;
-            this.showEditarPeriodo = false;
-            this.showEliminarPeriodo = false;
-            this.showConsultarPeriodo = true;
-        },
         toggleUserMenu() {
             this.showUserMenu = !this.showUserMenu;
         },
-        cargarPeriodos() {
-            fetch(`http://localhost:3000/periodoAcademico`)
+        cargarProductos() {
+            fetch('http://localhost:3000/productos')
                 .then(response => response.json())
                 .then(data => {
-                    this.periodos = data;
+                    this.productos = data;
                 })
                 .catch(error => {
-                    console.error('Error al cargar periodos:', error);
+                    console.error('Error al cargar productos:', error);
                 });
         },
         agregarPeriodos() {
@@ -183,8 +165,6 @@ export default {
             </div>
         </header>
     </div>
-
-    <!-- Crear Periodos -->
     <div class="crearPeriodos" v-show="showCrearPeriodo">
         <h3>Periodos Academicos</h3>
         <div class="card">
@@ -219,157 +199,6 @@ export default {
                         </li>
                     </ul>
                 </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Editar Periodos -->
-    <div class="editarPeriodos" v-show="showEditarPeriodo">
-        <h3>Periodos Academicos</h3>
-        <div class="card">
-            <div class="card-header">
-                Agregar Nuevo Periodo Academico
-            </div>
-            <div class="card-body">
-                <form class="form-inline" v-on:submit.prevent="agregarPeriodos">
-                    <ul class="navbar-nav m-auto">
-                        <li class="nav-item">
-                            <div class="form-group">
-                                <label class="form ml-sm-2 mr-sm-4 my-2">Nombre</label>
-                                <input v-model="nombrePeriodo" type="text" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
-                            </div>
-                        </li>
-                        <li class="nav-item">
-                            <div class="form-group">
-                                <label class="form ml-sm-2 mr-sm-4 my-2">Fecha de Inicio</label>
-                                <input v-model="fechaInicio" type="date" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
-                        </div>
-                        </li>
-                        <li class="nav-item">
-                            <div class="form-group">
-                                <label class="form ml-sm-2 mr-sm-4 my-2">Fecha de Fin</label>
-                                <input v-model="fechaFin" type="date" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
-                            </div>
-                        </li>
-                        <li class="nav-item">
-                            <div class="m-auto">
-                                <button type="submit" class="btn btn-primary ml-sm-2 mr-sm-4 my-5">Agregar Periodo</button>
-                            </div>
-                        </li>
-                    </ul>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Eliminar Periodos -->
-    <div class="eliminarPeriodos" v-show="showEliminarPeriodo">
-        <h3>Periodos Academicos</h3>
-        <div class="card">
-            <div class="card-header">
-                Agregar Nuevo Periodo Academico
-            </div>
-            <div class="card-body">
-                <form class="form-inline" v-on:submit.prevent="agregarPeriodos">
-                    <ul class="navbar-nav m-auto">
-                        <li class="nav-item">
-                            <div class="form-group">
-                                <label class="form ml-sm-2 mr-sm-4 my-2">Nombre</label>
-                                <input v-model="nombrePeriodo" type="text" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
-                            </div>
-                        </li>
-                        <li class="nav-item">
-                            <div class="form-group">
-                                <label class="form ml-sm-2 mr-sm-4 my-2">Fecha de Inicio</label>
-                                <input v-model="fechaInicio" type="date" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
-                        </div>
-                        </li>
-                        <li class="nav-item">
-                            <div class="form-group">
-                                <label class="form ml-sm-2 mr-sm-4 my-2">Fecha de Fin</label>
-                                <input v-model="fechaFin" type="date" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
-                            </div>
-                        </li>
-                        <li class="nav-item">
-                            <div class="m-auto">
-                                <button type="submit" class="btn btn-primary ml-sm-2 mr-sm-4 my-5">Agregar Periodo</button>
-                            </div>
-                        </li>
-                    </ul>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Consultar Periodos -->
-    <div class="consultarPeriodos" v-show="showConsultarPeriodo">
-        <h3>Periodos Academicos</h3>
-        <div class="card">
-            <div class="card-header">
-                Consultar Periodo Academico
-            </div>
-            <div class="card-body">
-                <form class="form-inline" v-on:submit.prevent="consultarPeriodos">
-                    <ul class="navbar-nav m-auto">
-                        <li class="nav-item">
-                            <div class="form-group">
-                                <label class="form ml-sm-2 mr-sm-4 my-2">Nombre</label>
-                                <input v-model="nombrePeriodo" type="text" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
-                            </div>
-                        </li>
-                        <li class="nav-item">
-                            <div class="m-auto">
-                                <button type="submit" class="btn btn-primary ml-sm-2 mr-sm-4 my-5">Consultar Periodo</button>
-                            </div>
-                        </li>
-                    </ul>
-                </form>
-            </div>
-        </div>
-        
-        <div class="card mt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">
-                                    ID
-                                </th>
-                                <th>
-                                    Nombre
-                                </th>
-                                <th>
-                                    Fecha de Inicio
-                                </th>
-                                <th>
-                                    Fecha de Fin
-                                </th>
-                                <th>
-                                    Estado
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="periodo in periodos" :key="periodo.id">
-                                <template v-if="editId == periodo.id">
-                                    <td>{{ periodo.id }}</td>
-                                    <td><input type="text" v-model="periodo.nombre" class="form-control"></td>
-                                    <td><input type="number" v-model="periodo.fechaInicio" class="form-control"></td>
-                                    <td><input type="number" v-model="periodo.fechafin" class="form-control"></td>
-                                    <td><input type="number" v-model="periodo.estado" class="form-control"></td>
-                                </template>
-                                <template v-else>
-                                    <td>{{ periodo.id }}</td>
-                                    <td>{{ periodo.nombre }}</td>
-                                    <td>${{ periodo.fechaInicio }}</td>
-                                    <td>${{ periodo.fechafin }}</td>
-                                    <td>${{ periodo.estado }}</td>
-                                </template>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
             </div>
         </div>
     </div>
