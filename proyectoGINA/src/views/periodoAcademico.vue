@@ -57,6 +57,14 @@ export default {
                 });
         },
         agregarPeriodos() {
+            // Calcula la diferencia en meses entre las fechas de inicio y fin
+                const diffMeses = (new Date(this.fechaFin).getTime() - new Date(this.fechaInicio).getTime()) / (1000 * 3600 * 24 * 30);
+                //console.log(diffMeses);
+            // Verifica que la diferencia sea 3 o 6 meses
+            if (diffMeses !== 3 && diffMeses !== 6) {
+                alert('La duración del periodo académico debe ser de 3 o 6 meses.');
+                return;
+            }
             const nuevoPeriodo = {
                 nombre: this.nombrePeriodo,
                 fechaInicio: this.fechaInicio,
