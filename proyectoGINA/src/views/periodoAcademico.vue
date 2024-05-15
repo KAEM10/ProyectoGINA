@@ -1,5 +1,12 @@
 <script>
+
+import HeaderComponent from '../views/ambiente.vue';
+
 export default {
+    components: {
+        HeaderComponent
+    },
+    emits: ['crearPeriodo', 'editarPeriodo', 'eliminarPeriodo', 'consultarPeriodo'],
     data() {
         return {
             editId: '',
@@ -42,6 +49,7 @@ export default {
             this.showEditarPeriodo = false;
             this.showEliminarPeriodo = false;
             this.showConsultarPeriodo = true;
+            console.log(this.showConsultarPeriodo);
         },
         toggleUserMenu() {
             this.showUserMenu = !this.showUserMenu;
@@ -139,57 +147,12 @@ export default {
 <template>
     <div>
         <!-- Header -->
-        <header class="header navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <router-link to="/home" class="navbar-brand">
-                    <i class="bi bi-shop"></i> Proyecto GINA
-                </router-link>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item dropdown" @click="showOptions" >
-                            <div href="#" class="nav-link">
-                                <i class="bi bi-card-text"></i> Periodo Academico
-                            </div>
-                            <li v-show="showPeriodoOptions" class="desplegable">
-                                <a class="nav-link" href="#" @click="crearPeriodo()">Crear Periodo</a>
-                                <a class="nav-link" href="#" @click="editarPeriodo()">Editar Periodo</a>
-                                <a class="nav-link" href="#" @click="eliminarPeriodo()">Eliminar Periodo</a>
-                                <a class="nav-link" href="#" @click="consultarPeriodo()">Consultar Periodo</a>
-                            </li>
-                        </li>
-                        <li class="nav-item">
-                            <router-link to="/docente" class="nav-link">
-                                <i class="bi bi-person"></i> Docentes
-                            </router-link>
-                        </li>
-                        <li class="nav-item">
-                            <router-link to="/ambiente" class="nav-link">
-                                <i class="bi bi-building"></i> Ambientes Academicos
-                            </router-link>
-                        </li>
-                        <li class="nav-item">
-                            <router-link to="/horario" class="nav-link">
-                                <i class="bi bi-calendar3"></i> Horarios
-                            </router-link>
-                        </li>
-                        <li class="nav-item" @click="toggleUserMenu">
-                            <a href="#" class="nav-link">
-                                <i class="bi bi-person"></i>
-                            </a>
-                        </li>
-                        <li v-show="showUserMenu" class="nav-item">
-                            <router-link to="/" class="nav-link">
-                                <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-                            </router-link>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </header>
+        <HeaderComponent
+            @crearPeriodo="crearPeriodo" 
+            @editarPeriodo="editarPeriodo" 
+            @eliminarPeriodo="eliminarPeriodo" 
+            @consultarPeriodo="consultarPeriodo"
+        />
     </div>
 
     <!-- Crear Periodos -->
