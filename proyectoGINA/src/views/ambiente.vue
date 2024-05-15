@@ -129,10 +129,10 @@ export default {
                                 <i class="bi bi-card-text"></i> Periodo Academico
                             </div>
                             <li v-show="showPeriodoOptions" class="desplegable">
-                                <a class="nav-link" href="#" @click="crearPeriodo()">Crear Periodo</a>
-                                <a class="nav-link" href="#" @click="editarPeriodo()">Editar Periodo</a>
-                                <a class="nav-link" href="#" @click="eliminarPeriodo()">Eliminar Periodo</a>
-                                <a class="nav-link" href="#" @click="consultarPeriodo()">Consultar Periodo</a>
+                                <a class="nav-link" href="#" @click="">Crear Periodo</a>
+                                <a class="nav-link" href="#" @click="">Editar Periodo</a>
+                                <a class="nav-link" href="#" @click="">Eliminar Periodo</a>
+                                <a class="nav-link" href="#" @click="">Consultar Periodo</a>
                             </li>
                         </li>
                         <li class="nav-item">

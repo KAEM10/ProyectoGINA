@@ -1,12 +1,11 @@
 <script>
 
-import HeaderComponent from '../views/ambiente.vue';
+import HeaderComponent from '../views/header.vue';
 
 export default {
     components: {
         HeaderComponent
     },
-    emits: ['crearPeriodo', 'editarPeriodo', 'eliminarPeriodo', 'consultarPeriodo'],
     data() {
         return {
             editId: '',
@@ -49,7 +48,6 @@ export default {
             this.showEditarPeriodo = false;
             this.showEliminarPeriodo = false;
             this.showConsultarPeriodo = true;
-            console.log(this.showConsultarPeriodo);
         },
         toggleUserMenu() {
             this.showUserMenu = !this.showUserMenu;
@@ -139,7 +137,7 @@ export default {
                     console.error('Error al eliminar producto:', error);
                 });
         },
-    },
+    }
 };
 
 </script>

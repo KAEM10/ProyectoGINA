@@ -12,14 +12,14 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item dropdown" @click="showOptions">
-                        <a href="#" class="nav-link">
+                        <router-link to="/periodoAcademico" class="navbar-brand">
                             <i class="bi bi-card-text"></i> Periodo Academico
-                        </a>
+                        </router-link>
                         <div v-show="showPeriodoOptions" class="desplegable">
                             <a class="nav-link" href="#" @click="crearPeriodo()">Crear Periodo</a>
                             <a class="nav-link" href="#" @click="editarPeriodo()">Editar Periodo</a>
                             <a class="nav-link" href="#" @click="eliminarPeriodo()">Eliminar Periodo</a>
-                            <a class="nav-link" href="#" @click="$emit('consultarPeriodo')">Consultar Periodo</a>
+                            <a class="nav-link" href="#" @click="consultarPeriodo()">Consultar Periodo</a>
                         </div>
                     </li>
                     <li class="nav-item">
@@ -57,11 +57,11 @@
 export default {
     name: 'header',
     components: {},
+    emits: ['crearPeriodo', 'editarPeriodo', 'eliminarPeriodo', 'consultarPeriodo'],
     data() {
         return {
             showPeriodoOptions: false,
             showUserMenu: false,
-
         };
     },
     methods: {
@@ -69,10 +69,7 @@ export default {
             this.showPeriodoOptions = !this.showPeriodoOptions;
         },
         crearPeriodo(){
-            this.showCrearPeriodo = true;
-            this.showEditarPeriodo = false;
-            this.showEliminarPeriodo = false;
-            this.showConsultarPeriodo = false;
+            this.$emit('editarPeriodo');
         },
         editarPeriodo() {
             this.$emit('editarPeriodo');

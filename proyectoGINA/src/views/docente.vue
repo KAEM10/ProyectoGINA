@@ -125,9 +125,9 @@ export default {
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item dropdown" @click="showOptions" >
-                            <div href="#" class="nav-link">
+                            <router-link to="/periodoAcademico" class="navbar-brand">
                                 <i class="bi bi-card-text"></i> Periodo Academico
-                            </div>
+                            </router-link>
                             <li v-show="showPeriodoOptions" class="desplegable">
                                 <a class="nav-link" href="#" @click="crearPeriodo()">Crear Periodo</a>
                                 <a class="nav-link" href="#" @click="editarPeriodo()">Editar Periodo</a>
