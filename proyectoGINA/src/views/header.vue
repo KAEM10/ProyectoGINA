@@ -22,10 +22,16 @@
                             <a class="nav-link" href="#" @click="consultarPeriodo()">Consultar Periodo</a>
                         </div>
                     </li>
-                    <li class="nav-item">
-                        <router-link to="/docente" class="nav-link">
-                            <i class="bi bi-person"></i> Docentes
+                    <li class="nav-item dropdown" @click="showOptionsDoc">
+                        <router-link to="/docente" class="navbar-brand">
+                            <i class="bi bi-card-text"></i> Docentes
                         </router-link>
+                        <div v-show="showDocenteOptions" class="desplegable">
+                            <a class="nav-link" href="#" @click="$emit('crearDocente')">Crear Docente</a>
+                            <a class="nav-link" href="#" @click="$emit('editarDocente')">Editar Docente</a>
+                            <a class="nav-link" href="#" @click="$emit('eliminarDocente')">Eliminar Docente</a>
+                            <a class="nav-link" href="#" @click="$emit('consultarDocente')">Consultar Docente</a>
+                        </div>
                     </li>
                     <li class="nav-item">
                         <router-link to="/ambiente" class="nav-link">
@@ -57,16 +63,25 @@
 export default {
     name: 'header',
     components: {},
-    emits: ['crearPeriodo', 'editarPeriodo', 'eliminarPeriodo', 'consultarPeriodo'],
+    emits: ['crearPeriodo', 'editarPeriodo', 'eliminarPeriodo', 'consultarPeriodo',
+        'crearDocente','editarDocente','eliminarDocente','consultarDocente'
+    ],
+    
     data() {
         return {
             showPeriodoOptions: false,
+            showDocenteOptions: false,
             showUserMenu: false,
         };
     },
     methods: {
         showOptions() {
             this.showPeriodoOptions = !this.showPeriodoOptions;
+            
+        },
+        showOptionsDoc() {
+            
+            this.showDocenteOptions = !this.showDocenteOptions;
         },
         crearPeriodo(){
             this.$emit('editarPeriodo');

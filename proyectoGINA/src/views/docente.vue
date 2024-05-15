@@ -1,29 +1,69 @@
 <script>
+import HeaderComponent from '../views/header.vue';
 export default {
+    components: {
+        HeaderComponent
+    },
+
     data() {
+        
         return {
             editId: '',
-            periodos: [],
-            nombrePeriodo: '',
-            fechaInicio: '',
-            fechaFin: '',
+            nombres:'',
+            apellidos:'',
+            tipoId:'',
+            tiposIDs: [
+                { id: 1, nombre: 'CC' },
+                { id: 2, nombre: 'CE' },
+                { id: 3, nombre: 'PASAPORTE' }
+            ],
+            numeroId:'',
+            tipoDocente:'',
+            tiposDocentes: [
+                { id: 1, nombre: 'Tecnico' },
+                { id: 2, nombre: 'Profesional' }
+            ],
+            tipoContrato:'',
+            tiposContratos: [
+                { id: 1, nombre: 'PT' },
+                { id: 2, nombre: 'CNT' }
+            ],
+            area:'',
             showUserMenu: false,
-            showPeriodoOptions: false,
-            showCrearPeriodo: false,
-            showEditarPeriodo: false,
-            showEliminarPeriodo: false,
-            showConsultarPeriodo: false,
+            showPeriodoDocOptions: false,
+            showCrearDocente: false,
+            showEditarDocente: false,
+            showEliminarDocente: false,
+            showConsultarDocente: false,
         };
     },
     methods: {
-        showOptions(){
-            this.showPeriodoOptions = !this.showPeriodoOptions;
+        showOptionsDoc(){
+            this.showPeriodoDocOptions = !this.showPeriodoDocOptions;
         },
-        crearPeriodo(){
-            this.showCrearPeriodo = true;
-            this.showEditarPeriodo = false;
-            this.showEliminarPeriodo = false;
-            this.showConsultarPeriodo = false;
+        crearDocente(){
+            this.showCrearDocente = true;
+            this.showEditarDocente = false;
+            this.showEliminarDocente = false;
+            this.showConsultarDocente = false;
+        },
+        editarDocente(){
+            this.showCrearDocente = false;
+            this.showEditarDocente = true;
+            this.showEliminarDocente = false;
+            this.showConsultarDocente = false;
+        },
+        eliminarDocente(){
+            this.showCrearDocente = false;
+            this.showEditarDocente = false;
+            this.showEliminarDocente = true;
+            this.showConsultarDocente = false;
+        },
+        consultarDocente(){
+            this.showCrearDocente = false;
+            this.showEditarDocente = false;
+            this.showEliminarDocente = false;
+            this.showConsultarDocente = true;
         },
         toggleUserMenu() {
             this.showUserMenu = !this.showUserMenu;
@@ -38,7 +78,7 @@ export default {
                     console.error('Error al cargar productos:', error);
                 });
         },
-        agregarPeriodos() {
+        agregarDocente() {
             const nuevoPeriodo = {
                 nombre: this.nombrePeriodo,
                 fechaInicio: this.fechaInicio,
@@ -112,84 +152,71 @@ export default {
 
 <template>
     <div>
-        <!-- Header -->
-        <header class="header navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <router-link to="/home" class="navbar-brand">
-                    <i class="bi bi-shop"></i> Proyecto GINA
-                </router-link>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item dropdown" @click="showOptions" >
-                            <router-link to="/periodoAcademico" class="navbar-brand">
-                                <i class="bi bi-card-text"></i> Periodo Academico
-                            </router-link>
-                            <li v-show="showPeriodoOptions" class="desplegable">
-                                <a class="nav-link" href="#" @click="crearPeriodo()">Crear Periodo</a>
-                                <a class="nav-link" href="#" @click="editarPeriodo()">Editar Periodo</a>
-                                <a class="nav-link" href="#" @click="eliminarPeriodo()">Eliminar Periodo</a>
-                                <a class="nav-link" href="#" @click="consultarPeriodo()">Consultar Periodo</a>
-                            </li>
-                        </li>
-                        <li class="nav-item">
-                            <router-link to="/docente" class="nav-link">
-                                <i class="bi bi-person"></i> Docentes
-                            </router-link>
-                        </li>
-                        <li class="nav-item">
-                            <router-link to="/ambiente" class="nav-link">
-                                <i class="bi bi-building"></i> Ambientes Academicos
-                            </router-link>
-                        </li>
-                        <li class="nav-item">
-                            <router-link to="/horario" class="nav-link">
-                                <i class="bi bi-calendar3"></i> Horarios
-                            </router-link>
-                        </li>
-                        <li class="nav-item" @click="toggleUserMenu">
-                            <a href="#" class="nav-link">
-                                <i class="bi bi-person"></i>
-                            </a>
-                        </li>
-                        <li v-show="showUserMenu" class="nav-item">
-                            <router-link to="/" class="nav-link">
-                                <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-                            </router-link>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </header>
+        <HeaderComponent
+            @crearDocente="crearDocente" 
+            @editarDocente="editarDocente" 
+            @eliminarDocente="eliminarDocente" 
+            @consultarDocente="consultarDocente"
+        />
     </div>
-    <div class="crearPeriodos" v-show="showCrearPeriodo">
-        <h3>Periodos Academicos</h3>
+    <div class="crearDocente" v-show="showCrearDocente">
+        <h3>Docentes</h3>
         <div class="card">
             <div class="card-header">
-                Agregar Nuevo Periodo Academico
+                Agregar Nuevo Docente
             </div>
             <div class="card-body">
-                <form class="form-inline" v-on:submit.prevent="agregarPeriodos">
+                <form class="form-inline" v-on:submit.prevent="agregarDocente">
                     <ul class="navbar-nav m-auto">
                         <li class="nav-item">
                             <div class="form-group">
-                                <label class="form ml-sm-2 mr-sm-4 my-2">Nombre</label>
-                                <input v-model="nombrePeriodo" type="text" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
+                                <label class="form ml-sm-2 mr-sm-4 my-2">Nombres</label>
+                                <input v-model="nombres" type="text" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
                             </div>
                         </li>
                         <li class="nav-item">
                             <div class="form-group">
-                                <label class="form ml-sm-2 mr-sm-4 my-2">Fecha de Inicio</label>
-                                <input v-model="fechaInicio" type="date" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
-                        </div>
+                                <label class="form ml-sm-2 mr-sm-4 my-2">Apellidos</label>
+                                <input v-model="apellidos" type="text" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
+                            </div>
                         </li>
                         <li class="nav-item">
                             <div class="form-group">
-                                <label class="form ml-sm-2 mr-sm-4 my-2">Fecha de Fin</label>
-                                <input v-model="fechaFin" type="date" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
+                                <label class="form ml-sm-2 mr-sm-4 my-2">Tipo de identificación</label>
+                                <select class="form-control w-100 ml-sm-2 mr-sm-4 my-2" v-model="tipoId">
+                                <option v-for="tipo in tiposIDs" :key="tipo.id" :value="tipo.nombre">{{ tipo.nombre }}</option>
+                                </select>
+                                
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <div class="form-group">
+                                <label class="form ml-sm-2 mr-sm-4 my-2">Numero de identificación</label>
+                                <input v-model="numeroId" type="number" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
+                            </div>
+                        </li>
+
+                        <li class="nav-item">
+                            <div class="form-group">
+                                <label class="form ml-sm-2 mr-sm-4 my-2">Tipo de Docente</label>
+                                <select class="form-control w-100 ml-sm-2 mr-sm-4 my-2" v-model="tipoDocente">
+                                <option v-for="tipo in tiposDocentes" :key="tipo.id" :value="tipo.nombre">{{ tipo.nombre }}</option>
+                                </select>
+                            </div>
+                        </li>
+
+                        <li class="nav-item">
+                            <div class="form-group">
+                                <label class="form ml-sm-2 mr-sm-4 my-2">Tipo de Contrato</label>
+                                <select class="form-control w-100 ml-sm-2 mr-sm-4 my-2" v-model="tipoContrato">
+                                <option v-for="tipo in tiposContratos" :key="tipo.id" :value="tipo.nombre">{{ tipo.nombre }}</option>
+                                </select>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <div class="form-group">
+                                <label class="form ml-sm-2 mr-sm-4 my-2">Area perteneciente</label>
+                                <input v-model="area" type="text" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
                             </div>
                         </li>
                         <li class="nav-item">
@@ -197,6 +224,7 @@ export default {
                                 <button type="submit" class="btn btn-primary ml-sm-2 mr-sm-4 my-5">Agregar Periodo</button>
                             </div>
                         </li>
+                        
                     </ul>
                 </form>
             </div>
