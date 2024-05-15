@@ -41,10 +41,11 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 //rutas para obtener, crear, actualizar y eliminar usuarios
-app.get('/periodoAcademico', (req, res) => {
-    connection.query('SELECT * FROM usuarios', (error, results) => {
+app.get('/periodoAcademico/:nombre', (req, res) => {
+    const nombre = req.params.nombre;
+    connection.query('SELECT * FROM periodoacademico WHERE nombre = ?', [nombre], (error, results) => {
         if (error) {
-            res.status(500).json({ error: 'Error al obtener usuarios' });
+            res.status(500).json({ error: 'Error al obtener periodoacademico' });
         } else {
             res.json(results);
         }
@@ -56,7 +57,7 @@ app.post('/periodoAcademico', (req, res) => {
     const { nombre, fechaInicio, fechafin, estado } = req.body;
     connection.query('INSERT INTO periodoacademico (nombre, fecha_inicio, fecha_final, estado) VALUES (?, ?, ?, ?)', [nombre, fechaInicio, fechafin, estado], (error, results) => {
         if (error) throw error;
-        res.json({ message: 'Usuario creado', id: results.insertId });
+        res.json({ message: 'periodoAcademico creado', id: results.insertId });
     });
 });
 

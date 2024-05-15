@@ -16,10 +16,10 @@
                             <i class="bi bi-card-text"></i> Periodo Academico
                         </router-link>
                         <div v-show="showPeriodoOptions" class="desplegable">
-                            <a class="nav-link" href="#" @click="crearPeriodo()">Crear Periodo</a>
-                            <a class="nav-link" href="#" @click="editarPeriodo()">Editar Periodo</a>
-                            <a class="nav-link" href="#" @click="eliminarPeriodo()">Eliminar Periodo</a>
-                            <a class="nav-link" href="#" @click="consultarPeriodo()">Consultar Periodo</a>
+                            <a class="nav-link" href="#" @click="$emit('crearPeriodo')">Crear Periodo</a>
+                            <a class="nav-link" href="#" @click="$emit('editarPeriodo')">Editar Periodo</a>
+                            <a class="nav-link" href="#" @click="$emit('eliminarPeriodo')">Eliminar Periodo</a>
+                            <a class="nav-link" href="#" @click="$emit('consultarPeriodo')">Consultar Periodo</a>
                         </div>
                     </li>
                     <li class="nav-item dropdown" @click="showOptionsDoc">
@@ -82,18 +82,6 @@ export default {
         showOptionsDoc() {
             
             this.showDocenteOptions = !this.showDocenteOptions;
-        },
-        crearPeriodo(){
-            this.$emit('editarPeriodo');
-        },
-        editarPeriodo() {
-            this.$emit('editarPeriodo');
-        },
-        eliminarPeriodo() {
-            this.$emit('eliminarPeriodo');
-        },
-        consultarPeriodo() {
-            this.$emit('consultarPeriodo');
         },
         toggleUserMenu() {
             this.showUserMenu = !this.showUserMenu;

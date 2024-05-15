@@ -8,8 +8,8 @@ export default {
     },
     data() {
         return {
-            editId: '',
             periodos: [],
+            fechas: [],
             nombrePeriodo: '',
             fechaInicio: '',
             fechaFin: '',
@@ -52,11 +52,36 @@ export default {
         toggleUserMenu() {
             this.showUserMenu = !this.showUserMenu;
         },
-        cargarPeriodos() {
-            fetch(`http://localhost:3000/periodoAcademico`)
+        consultarPeriodos(nombrePeriodo) {
+            fetch(`http://localhost:3000/periodoAcademico/${nombrePeriodo}`)
                 .then(response => response.json())
                 .then(data => {
-                    this.periodos = data;
+                    if (data.length > 0) {
+                        let fecha = new Date(data[0].fecha_inicio);
+                        // Obtener el día, mes y año
+                        let dia = fecha.getDate();
+                        let mes = fecha.getMonth() + 1; // Los meses van de 0 a 11, por eso sumamos 1
+                        let anio = fecha.getFullYear();
+                        // Formatear la fecha
+                        let fechaFormateada = `${dia.toString().padStart(2, '0')}/${mes.toString().padStart(2, '0')}/${anio}`;
+                        // Asignar la fecha formateada al objeto
+                        data[0].fecha_inicio = fechaFormateada;
+
+                        let fecha1 = new Date(data[0].fecha_final);
+                        // Obtener el día, mes y años
+                        let dia1 = fecha1.getDate();
+                        let mes1 = fecha1.getMonth() + 1; // Los meses van de 0 a 11, por eso sumamos 1
+                        let anio1 = fecha1.getFullYear();
+                        // Formatear la fecha
+                        let fechaFormateada1 = `${dia1.toString().padStart(2, '0')}/${mes1.toString().padStart(2, '0')}/${anio1}`;
+                        // Asignar la fecha formateada al objeto
+                        data[0].fecha_final = fechaFormateada1;
+                        this.periodos = data;
+                        this.nombrePeriodo = '';
+                        //console.log(data);
+                    } else {
+                        console.warn(`No se encontró ningún período académico con el nombre ${nombrePeriodo}`);
+                    }
                 })
                 .catch(error => {
                     console.error('Error al cargar periodos:', error);
@@ -178,7 +203,9 @@ export default {
                         <li class="nav-item">
                             <div class="form-group">
                                 <label class="form ml-sm-2 mr-sm-4 my-2">Fecha de Fin</label>
-                                <input v-model="fechaFin" type="date" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
+                                <select class="form-control w-100 ml-sm-2 mr-sm-4 my-2" v-model="fechaFin">
+                                    <option v-for="fecha in fechas">{{ fecha }}</option>
+                                </select>
                             </div>
                         </li>
                         <li class="nav-item">
@@ -197,7 +224,7 @@ export default {
         <h3>Periodos Academicos</h3>
         <div class="card">
             <div class="card-header">
-                Agregar Nuevo Periodo Academico
+                Editar Periodo Academico
             </div>
             <div class="card-body">
                 <form class="form-inline" v-on:submit.prevent="agregarPeriodos">
@@ -236,7 +263,7 @@ export default {
         <h3>Periodos Academicos</h3>
         <div class="card">
             <div class="card-header">
-                Agregar Nuevo Periodo Academico
+                Eliminar Periodo Academico
             </div>
             <div class="card-body">
                 <form class="form-inline" v-on:submit.prevent="agregarPeriodos">
@@ -278,7 +305,7 @@ export default {
                 Consultar Periodo Academico
             </div>
             <div class="card-body">
-                <form class="form-inline" v-on:submit.prevent="consultarPeriodos">
+                <form class="form-inline" v-on:submit.prevent="consultarPeriodos(nombrePeriodo)">
                     <ul class="navbar-nav m-auto">
                         <li class="nav-item">
                             <div class="form-group">
@@ -320,21 +347,12 @@ export default {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="periodo in periodos" :key="periodo.id">
-                                <template v-if="editId == periodo.id">
-                                    <td>{{ periodo.id }}</td>
-                                    <td><input type="text" v-model="periodo.nombre" class="form-control"></td>
-                                    <td><input type="number" v-model="periodo.fechaInicio" class="form-control"></td>
-                                    <td><input type="number" v-model="periodo.fechafin" class="form-control"></td>
-                                    <td><input type="number" v-model="periodo.estado" class="form-control"></td>
-                                </template>
-                                <template v-else>
-                                    <td>{{ periodo.id }}</td>
-                                    <td>{{ periodo.nombre }}</td>
-                                    <td>${{ periodo.fechaInicio }}</td>
-                                    <td>${{ periodo.fechafin }}</td>
-                                    <td>${{ periodo.estado }}</td>
-                                </template>
+                            <tr v-for="periodo in periodos">
+                                <td>{{ periodo.id_periodo }}</td>
+                                <td>{{ periodo.nombre }}</td>
+                                <td>{{ periodo.fecha_inicio}}</td>
+                                <td>{{ periodo.fecha_final }}</td>
+                                <td>{{ periodo.estado }}</td>
                             </tr>
                         </tbody>
                     </table>
