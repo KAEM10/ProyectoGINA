@@ -63,18 +63,18 @@ app.post('/periodoAcademico', (req, res) => {
 
 app.put('/periodoAcademico/:id', (req, res) => {
     const id = req.params.id;
-    const { nombre, email } = req.body;
-    connection.query('UPDATE usuarios SET nombre = ?, email = ? WHERE id = ?', [nombre, email, id], (error, results) => {
+    const { nombre, fecha_inicio, fecha_final, estado } = req.body;
+    connection.query('UPDATE periodoacademico SET nombre = ?, fecha_inicio = ?, fecha_final = ?, estado = ? WHERE id_periodo = ?', [nombre, fecha_inicio, fecha_final, estado, id], (error, results) => {
         if (error) throw error;
-        res.json({ message: 'Usuario actualizado' });
+        res.json({ message: 'periodoAcademico actualizado' });
     });
 });
 
 app.delete('/periodoAcademico/:id', (req, res) => {
     const id = req.params.id;
-    connection.query('DELETE FROM usuarios WHERE id = ?', [id], (error, results) => {
+    connection.query('DELETE FROM periodoacademico WHERE id_periodo = ?', [id], (error, results) => {
         if (error) throw error;
-        res.json({ message: 'Usuario eliminado' });
+        res.json({ message: 'periodoAcademico eliminado' });
     });
 });
 
