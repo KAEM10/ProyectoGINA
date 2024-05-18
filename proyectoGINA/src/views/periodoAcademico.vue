@@ -90,40 +90,31 @@ export default {
         toggleUserMenu() {
             this.showUserMenu = !this.showUserMenu;
         },
-        consultarPeriodos(nombrePeriodo) {
-            fetch(`http://localhost:3000/periodoAcademico/${nombrePeriodo}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.length > 0) {
-                        let fecha = new Date(data[0].fecha_inicio);
-                        // Obtener el día, mes y año
-                        let dia = fecha.getDate();
-                        let mes = fecha.getMonth() + 1; // Los meses van de 0 a 11, por eso sumamos 1
-                        let anio = fecha.getFullYear();
-                        // Formatear la fecha
-                        let fechaFormateada = `${dia.toString().padStart(2, '0')}/${mes.toString().padStart(2, '0')}/${anio}`;
-                        // Asignar la fecha formateada al objeto
-                        data[0].fecha_inicio = fechaFormateada;
+        formatearFecha(fechaString) {
+            const fecha = new Date(fechaString);
+            const dia = fecha.getDate().toString().padStart(2, '0');
+            const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Los meses van de 0 a 11, por eso sumamos 1
+            const anio = fecha.getFullYear();
+            return `${dia}/${mes}/${anio}`;
+        },
+        async consultarPeriodos(nombrePeriodo) {
+            try {
+                const response = await fetch(`http://localhost:3000/periodoAcademico/${nombrePeriodo}`);
+                const data = await response.json();
 
-                        let fecha1 = new Date(data[0].fecha_final);
-                        // Obtener el día, mes y años
-                        let dia1 = fecha1.getDate();
-                        let mes1 = fecha1.getMonth() + 1; // Los meses van de 0 a 11, por eso sumamos 1
-                        let anio1 = fecha1.getFullYear();
-                        // Formatear la fecha
-                        let fechaFormateada1 = `${dia1.toString().padStart(2, '0')}/${mes1.toString().padStart(2, '0')}/${anio1}`;
-                        // Asignar la fecha formateada al objeto
-                        data[0].fecha_final = fechaFormateada1;
-                        this.periodos = data;
-                        this.nombrePeriodo = '';
-                        //console.log(data);
-                    } else {
-                        console.warn(`No se encontró ningún período académico con el nombre ${nombrePeriodo}`);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error al cargar periodos:', error);
-                });
+                if (data.length > 0) {
+                    // Formatear fechas de inicio y fin
+                    data[0].fecha_inicio = this.formatearFecha(data[0].fecha_inicio);
+                    data[0].fecha_final = this.formatearFecha(data[0].fecha_final);
+
+                    this.periodos = data;
+                    this.nombrePeriodo = '';
+                } else {
+                    console.warn(`No se encontró ningún período académico con el nombre ${nombrePeriodo}`);
+                }
+            } catch (error) {
+                console.error('Error al cargar periodos:', error);
+            }
         },
         agregarPeriodos() {
             const nuevoPeriodo = {
