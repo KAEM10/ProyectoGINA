@@ -2,20 +2,46 @@
     <div>
       <HeaderComponent />
       <div class="container">
-        <div class="form-group">
-          <label for="period-select">Seleccione período académico:</label>
-          <select id="period-select" v-model="selectedPeriod">
-            <option v-for="period in periods" :key="period" :value="period">{{ period }}</option>
-          </select>
-        </div>
         <div class="form-group search-container">
-          <label for="search-ambient">Buscar ambiente:</label>
+          <label for="program-select">Selecciona el programa:</label>
           <div class="search-box">
             <input
               type="text"
-              id="search-ambient"
-              v-model="searchQuery"
-              placeholder="Buscar ambiente"
+              id="program-select"
+              v-model="selectedProgram"
+              placeholder="Buscar programa"
+            />
+            <span class="search-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M10,2A8,8,0,1,0,18,10,8,8,0,0,0,10,2ZM10,14A4,4,0,1,1,14,10,4,4,0,0,1,10,14Zm7.71,4.29-3.39-3.39A6.92,6.92,0,0,0,17,10a7,7,0,1,0-2,5l3.39,3.39a1,1,0,1,0,1.42-1.42Z"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+        <div class="form-group search-container">
+          <label for="docente-select">Selecciona el docente:</label>
+          <div class="search-box">
+            <input
+              type="text"
+              id="docente-select"
+              v-model="selectedDocente"
+              placeholder="Buscar docente"
+            />
+            <span class="search-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M10,2A8,8,0,1,0,18,10,8,8,0,0,0,10,2ZM10,14A4,4,0,1,1,14,10,4,4,0,0,1,10,14Zm7.71,4.29-3.39-3.39A6.92,6.92,0,0,0,17,10a7,7,0,1,0-2,5l3.39,3.39a1,1,0,1,0,1.42-1.42Z"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+        <div class="form-group search-container">
+          <label for="competencia-select">Selecciona la competencia a orientar:</label>
+          <div class="search-box">
+            <input
+              type="text"
+              id="competencia-select"
+              v-model="selectedCompetencia"
+              placeholder="Buscar competencia"
             />
             <span class="search-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -26,7 +52,7 @@
         </div>
       </div>
       <div>
-        <componentHorario :filteredAmbients="filteredAmbients"/>
+        <componentHorario />
       </div>
     </div>
   </template>
@@ -42,19 +68,11 @@
     },
     data() {
       return {
-        periods: ['2021-2022', '2022-2023', '2023-2024'], // Example periods
-        selectedPeriod: '',
-        searchQuery: '',
-        ambients: ['Aula 101', 'Aula 102', 'Laboratorio 201', 'Sala de reuniones', 'Biblioteca'] // Example ambients
+        selectedProgram: '',
+        selectedDocente: '',
+        selectedCompetencia: '',
       };
     },
-    computed: {
-      filteredAmbients() {
-        return this.ambients.filter(ambient =>
-          ambient.toLowerCase().includes(this.searchQuery.toLowerCase())
-        );
-      }
-    }
   };
   </script>
   
@@ -78,7 +96,7 @@
     font-weight: bold;
   }
   
-  select, input {
+  input {
     margin-top: 5px;
     padding: 5px;
     width: 100%;
