@@ -29,6 +29,16 @@ export default {
                 { id: 2, nombre: 'CNT' }
             ],
             area:'',
+            estado:'',
+            tiposEstados: [
+                { id: 1, nombre: 'activo' },
+                { id: 2, nombre: 'inactivo' }
+            ],
+            idUsuario:0,
+            usuario:'',
+            contrasena:'',
+            docentes:[],
+            usuarios:[],
             showUserMenu: false,
             showPeriodoDocOptions: false,
             showCrearDocente: false,
@@ -78,34 +88,119 @@ export default {
                     console.error('Error al cargar productos:', error);
                 });
         },
-        agregarDocente() {
-            const nuevoPeriodo = {
-                nombre: this.nombrePeriodo,
-                fechaInicio: this.fechaInicio,
-                fechafin: this.fechaFin,
-                estado: 'activo'
+        /*
+        agregarUsuario() {
+            const nuevoUsuario = {
+                usuario:this.usuario,
+                contra:this.contrasena
             };
-            fetch('http://localhost:3000/periodoAcademico', {
+            fetch('http://localhost:3000/crearUsuario', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(nuevoPeriodo)
+                body: JSON.stringify(nuevoUsuario)
             })
                 .then(response => response.json())
                 .then(data => {
                     // Si la solicitud es exitosa, actualiza la lista de usuarios
-                    this.periodos.push(data);
-
-                    // Limpia los campos de entrada
-                    this.nombrePeriodo = '';
-                    this.fechaInicio = '';
-                    this.fechaFin = '';
+                    console.log(data)
+                    this.idUsuario=data.id
+                    console.log(this.idUsuario)
+                    this.usuarios.push(data)
                 })
                 .catch(error => {
-                    console.error('Error al agregar periodo academico:', error);
+                    console.error('Error al agregar Docentes:', error);
                 });
         },
+        agregarDocente() {
+            this.agregarUsuario()
+            console.log(this.idUsuario)
+            const nuevoDocente = {
+                nombres:this.nombres,
+                apellidos:this.apellidos,
+                tipoId:this.tipoId,
+                numeroId:this.numeroId,
+                tipoDocente:this.tipoDocente,
+                tipoContrato:this.tipoContrato,
+                area:this.area,
+                estado:this.estado,
+                usuario:this.idUsuario
+            };
+            fetch('http://localhost:3000/crearDocente', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(nuevoDocente)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Si la solicitud es exitosa, actualiza la lista de usuarios
+                    this.docentes.push(data);
+
+                    
+                })
+                .catch(error => {
+                    console.error('Error al agregar Docentes:', error);
+                });
+        },*/
+        async agregarDocente() {
+        try {
+        const idUsuario = await this.agregarUsuario();
+        const nuevoDocente = {
+            nombres: this.nombres,
+            apellidos: this.apellidos,
+            tipoId: this.tipoId,
+            numeroId: this.numeroId,
+            tipoDocente: this.tipoDocente,
+            tipoContrato: this.tipoContrato,
+            area: this.area,
+            estado: this.estado,
+            usuario: idUsuario
+        };
+
+        const response = await fetch('http://localhost:3000/crearDocente', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(nuevoDocente)
+        });
+
+        const data = await response.json();
+        this.docentes.push(data);
+
+    } catch (error) {
+        console.error('Error al agregar Docentes:', error);
+    }
+},
+
+async agregarUsuario() {
+    try {
+        const nuevoUsuario = {
+            usuario: this.usuario,
+            contra: this.contrasena
+        };
+
+        const response = await fetch('http://localhost:3000/crearUsuario', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(nuevoUsuario)
+        });
+
+        const data = await response.json();
+        this.idUsuario = data.id;
+        this.usuarios.push(data);
+        return data.id;
+
+    } catch (error) {
+        console.error('Error al agregar Usuario:', error);
+        throw error;
+    }
+    },
         actualizarProducto(producto) {
             fetch(`http://localhost:3000/productos/${producto.id}`, {
                 method: 'PUT',
@@ -220,8 +315,29 @@ export default {
                             </div>
                         </li>
                         <li class="nav-item">
+                            <div class="form-group">
+                                <label class="form ml-sm-2 mr-sm-4 my-2">Estado</label>
+                                <select class="form-control w-100 ml-sm-2 mr-sm-4 my-2" v-model="estado">
+                                <option v-for="tipo in tiposEstados" :key="tipo.id"  :value="tipo.nombre">{{ tipo.nombre }}</option>
+                                </select>
+                            </div>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <div class="form-group">
+                                <label class="form ml-sm-2 mr-sm-4 my-2">Usuario</label>
+                                <input v-model="usuario" type="text" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <div class="form-group">
+                                <label class="form ml-sm-2 mr-sm-4 my-2">Contraseña</label>
+                                <input v-model="contrasena" type="password" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
+                            </div>
+                        </li>
+                        <li class="nav-item">
                             <div class="m-auto">
-                                <button type="submit" class="btn btn-primary ml-sm-2 mr-sm-4 my-5">Agregar Periodo</button>
+                                <button type="submit" class="btn btn-primary ml-sm-2 mr-sm-4 my-5">Agregar Docente</button>
                             </div>
                         </li>
                         

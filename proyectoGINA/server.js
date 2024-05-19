@@ -78,6 +78,24 @@ app.delete('/periodoAcademico/:id', (req, res) => {
     });
 });
 
+
+
+app.post('/crearDocente', (req, res) => {
+    const { nombres, apellidos, tipoId, numeroId,tipoDocente,tipoContrato,area,estado,usuario } = req.body;
+    connection.query('INSERT INTO docente (nombres, apellidos, tipo_identificacion, identificacion,tipo_docente,tipo_contrato,area_perteneciente,estado,id_usuario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [nombres, apellidos, tipoId, numeroId,tipoDocente,tipoContrato,area,estado,usuario], (error, results) => {
+        if (error) throw error;
+        res.json({ message: 'Docente creado', id: results.insertId });
+    });
+});
+
+app.post('/crearUsuario', (req, res) => {
+    const {usuario,contra } = req.body;
+    connection.query('INSERT INTO usuario (usuario_login,usuario_pwd) VALUES (?, ?)', [usuario,contra], (error, results) => {
+        if (error) throw error;
+        res.json({ message: 'Usuario creado', id: results.insertId });
+    });
+});
+
 app.listen(port, () => {
     console.log(`Servidor iniciado en http://localhost:${port}`);
 });
