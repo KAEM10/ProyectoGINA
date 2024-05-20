@@ -316,6 +316,9 @@ export default {
     </div>
     <div  v-show="showEditarDocente">
         <h3>Docentes</h3>
+        <div class="card-header">
+            Editar Docentes
+        </div>
         <componenteConsulta @cargarDocente="cargarDocente" />
         
         <div class="card mt">
@@ -413,6 +416,9 @@ export default {
 
     <div  v-show="showEliminarDocente">
         <h3>Docentes</h3>
+        <div class="card-header">
+            Eliminar Docentes
+        </div>
         <componenteConsulta @cargarDocente="cargarDocente" />
         
         <div class="card mt">
@@ -476,6 +482,9 @@ export default {
 
     <div  v-show="showConsultarDocente">
     <h3>Docentes</h3>
+    <div class="card-header">
+      Consultar Docentes
+    </div>
     <componenteConsulta @cargarDocente="cargarDocente" />
         <div class="card mt">
             <div class="card-body">
