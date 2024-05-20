@@ -53,64 +53,107 @@ export default {
             this.showEliminarDocente = (accion === 'eliminar');
             this.showConsultarDocente = (accion === 'consultar');
         },
-        cargarProductos() {
-            fetch('http://localhost:3000/productos')
-                .then(response => response.json())
-                .then(data => {
-                    this.productos = data;
-                })
-                .catch(error => {
-                    console.error('Error al cargar productos:', error);
-                });
+        onEditOrCancel(ambiente) {
+            this.editId = ambiente ? ambiente.codigo : '';
         },
-        agregarDocente() {
-            const nuevoPeriodo = {
-                nombre: this.nombrePeriodo,
-                fechaInicio: this.fechaInicio,
-                fechafin: this.fechaFin,
-                estado: 'activo'
-            };
-            fetch('http://localhost:3000/periodoAcademico', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(nuevoPeriodo)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // Si la solicitud es exitosa, actualiza la lista de usuarios
-                    this.periodos.push(data);
+        async cargarDocente(parametro) {
+            try {
+                if(parametro==""){
+                    console.warn("parametro vacio")
+                    this.tablaVacia=true;
+                }else{
+                    const response = await fetch(`http://localhost:3000/cargarDocente/${parametro}`);
+                    const data = await response.json();
 
-                    // Limpia los campos de entrada
-                    this.nombrePeriodo = '';
-                    this.fechaInicio = '';
-                    this.fechaFin = '';
-                })
-                .catch(error => {
-                    console.error('Error al agregar periodo academico:', error);
-                });
+                if (data.length > 0) {
+                    this.docentes = data;
+                    this.tablaVacia=false;
+                    
+                } else {
+                    this.tablaVacia=true;
+                    console.warn(`No se encontró ningún docente con:  ${parametro}`);
+                }
+                }
+                
+            } catch (error) {
+                console.error('Error al cargar Docentes:', error);
+            }
         },
-        actualizarProducto(producto) {
-            fetch(`http://localhost:3000/productos/${producto.id}`, {
+        async agregarDocente() {
+        try {
+        const idUsuario = await this.agregarUsuario();
+        const nuevoDocente = {
+            nombres: this.nombres,
+            apellidos: this.apellidos,
+            tipoId: this.tipoId,
+            numeroId: this.numeroId,
+            tipoDocente: this.tipoDocente,
+            tipoContrato: this.tipoContrato,
+            area: this.area,
+            estado: this.estado,
+            usuario: idUsuario
+        };
+
+        const response = await fetch('http://localhost:3000/crearDocente', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(nuevoDocente)
+        });
+
+        const data = await response.json();
+        
+
+    } catch (error) {
+        console.error('Error al agregar Docentes:', error);
+    }
+        },
+
+        async agregarUsuario() {
+        try {
+        const nuevoUsuario = {
+            usuario: this.usuario,
+            contra: this.contrasena
+        };
+
+        const response = await fetch('http://localhost:3000/crearUsuario', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(nuevoUsuario)
+        });
+
+        const data = await response.json();
+        this.idUsuario = data.id;
+        this.usuarios.push(data);
+        return data.id;
+
+    } catch (error) {
+        console.error('Error al agregar Usuario:', error);
+        throw error;
+    }
+        },
+        actualizarDocente(docente) {
+            fetch(`http://localhost:3000/actualizarDocente/${docente.id_docente}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(producto)
+                body: JSON.stringify(docente)
             })
                 .then(response => response.json())
                 .then(() => {
                     this.editId = '';
-                    // Volver a cargar la lista de usuarios
-                    this.cargarProductos();
+                    this.cargarDocente(docente.identificacion);
                 })
                 .catch(error => {
-                    console.error('Error al actualizar usuario:', error);
+                    console.error('Error al actualizar el docente:', error);
                 });
         },
-        eliminarProducto(id) {
-            fetch(`http://localhost:3000/productos/${id}`, {
+        borrarDocente(id) {
+            fetch(`http://localhost:3000/borrarDocente/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -118,17 +161,20 @@ export default {
             })
                 .then(response => response.json())
                 .then(() => {
-                    const index = this.productos.findIndex(producto => producto.id === id);
+                    const index = this.docentes.findIndex(docente => docente.id_docente === id);
                     if (index !== -1) {
-                        this.productos.splice(index, 1);
+                        this.docentes.splice(index, 1);
                     }
-                    alert("Producto eliminado con exito");
-                    // Volver a cargar la lista de usuarios
-                    this.cargarProductos();
+                    alert("Docente eliminado con exito");
                 })
                 .catch(error => {
-                    console.error('Error al eliminar producto:', error);
+                    console.error('Error al eliminar docente:', error);
                 });
+        },
+        validarEliminar(id){
+            if(confirm("¿Está seguro que desea eliminar el docente?")){
+                this.borrarDocente(id);
+            }
         },
     },
 };
@@ -284,7 +330,7 @@ export default {
                                             <i v-on:click="actualizarDocente(docente)" class="bi bi-check"></i>
                                         </a>
                                         <a href="#" class="icon">
-                                            <i v-on:click="onCancel" class="bi bi-x-circle"></i>
+                                            <i v-on:click="onEditOrCancel" class="bi bi-x-circle"></i>
                                         </a>
                                     </td>
                                 </template>
@@ -299,7 +345,7 @@ export default {
                                     <td>{{ docente.estado }}</td>
                                     <td>
                                         <a href="#" class="icon">
-                                            <i v-on:click="onEdit(docente)" >Editar</i>
+                                            <i v-on:click="onEditOrCancel(docente)" >Editar</i>
                                         </a>
                                     </td>
                                 </template>

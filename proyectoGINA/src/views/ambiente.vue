@@ -17,8 +17,8 @@ export default {
             estudiantes: '',
             ubicacion: '',
             fechas: [],
-            tipoo: '',
-            tipo: [{ id: 1, nombre: 'virtual' }, { id: 2, nombre: 'presencial' }],
+            tipo: '',
+            tipos: [{ id: 1, nombre: 'Virtual' }, { id: 2, nombre: 'Presencial' }],
             editId: '',
             nombrePeriodo: '',
             fechaInicio: '',
@@ -185,8 +185,8 @@ export default {
                         <li class="nav-item">
                             <div class="form-group">
                                 <label class="form ml-sm-2 mr-sm-4 my-2">Tipo</label>
-                                <select class="form-control w-100 ml-sm-2 mr-sm-4 my-2" v-model="tipoo">
-                                    <option v-for="tip in tipo" :key="tip.id" :value="tip.nombre">{{ tip.nombre }}
+                                <select class="form-control w-100 ml-sm-2 mr-sm-4 my-2" v-model="tipo">
+                                    <option v-for="tip in tipos" :key="tip.id" :value="tip.nombre">{{ tip.nombre }}
                                     </option>
                                 </select>
                             </div>
