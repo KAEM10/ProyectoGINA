@@ -16,10 +16,10 @@
                             <i class="bi bi-card-text"></i> Periodo Academico
                         </router-link>
                         <div v-show="showPeriodoOptions" class="desplegable">
-                            <a class="nav-link" href="#" @click="$emit('crearPeriodo')">Crear Periodo</a>
-                            <a class="nav-link" href="#" @click="$emit('editarPeriodo')">Editar Periodo</a>
-                            <a class="nav-link" href="#" @click="$emit('eliminarPeriodo')">Eliminar Periodo</a>
-                            <a class="nav-link" href="#" @click="$emit('consultarPeriodo')">Consultar Periodo</a>
+                            <a class="nav-link" href="#" @click="$emit('cambiarEstadoPeriodo', 'crear')">Crear Periodo</a>
+                            <a class="nav-link" href="#" @click="$emit('cambiarEstadoPeriodo', 'editar')">Editar Periodo</a>
+                            <a class="nav-link" href="#" @click="$emit('cambiarEstadoPeriodo', 'eliminar')">Eliminar Periodo</a>
+                            <a class="nav-link" href="#" @click="$emit('cambiarEstadoPeriodo', 'consultar')">Consultar Periodo</a>
                         </div>
                     </li>
                     <li class="nav-item dropdown" @click="showOptionsDoc">
@@ -63,7 +63,7 @@
 export default {
     name: 'header',
     components: {},
-    emits: ['crearPeriodo', 'editarPeriodo', 'eliminarPeriodo', 'consultarPeriodo',
+    emits: ['cambiarEstadoPeriodo',
         'crearDocente','editarDocente','eliminarDocente','consultarDocente'
     ],
     
@@ -77,10 +77,8 @@ export default {
     methods: {
         showOptions() {
             this.showPeriodoOptions = !this.showPeriodoOptions;
-            
         },
         showOptionsDoc() {
-            
             this.showDocenteOptions = !this.showDocenteOptions;
         },
         toggleUserMenu() {

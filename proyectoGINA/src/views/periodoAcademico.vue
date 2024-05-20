@@ -1,10 +1,12 @@
 <script>
 
 import HeaderComponent from '../views/header.vue';
+import componenteConsultaPerAca from '../views/componenteConsultaPerAca.vue';
 
 export default {
     components: {
-        HeaderComponent
+        HeaderComponent,
+        componenteConsultaPerAca
     },
     data() {
         return {
@@ -15,8 +17,7 @@ export default {
             nombrePeriodo: '',
             fechaInicio: '',
             fechaFin: '',
-            showUserMenu: false,
-            showPeriodoOptions: false,
+            tablaVacia: false,
             showCrearPeriodo: false,
             showEditarPeriodo: false,
             showEliminarPeriodo: false,
@@ -24,11 +25,14 @@ export default {
         };
     },
     methods: {
-        onEdit(periodo){
-            this.editId = periodo.id_periodo;
+        onEditOrCancel(periodo) {
+            this.editId = periodo ? periodo.id_periodo : '';
         },
-        onCancel(){
-            this.editId = '';
+        limpiaCampos(){
+            this.nombrePeriodo = '';
+            this.fechaInicio = '';
+            this.fechaFin = '';
+            this.periodos = [];
         },
         actualizarFechaFin(fecha) {
             if (!fecha) return;
@@ -60,35 +64,12 @@ export default {
             // Seleccionar la primera fecha por defecto
             this.fechaFin = this.fechas[0];
         },
-        showOptions(){
-            this.showPeriodoOptions = !this.showPeriodoOptions;
-        },
-        crearPeriodo(){
-            this.showCrearPeriodo = true;
-            this.showEditarPeriodo = false;
-            this.showEliminarPeriodo = false;
-            this.showConsultarPeriodo = false;
-        },
-        editarPeriodo(){
-            this.showCrearPeriodo = false;
-            this.showEditarPeriodo = true;
-            this.showEliminarPeriodo = false;
-            this.showConsultarPeriodo = false;
-        },
-        eliminarPeriodos(){
-            this.showCrearPeriodo = false;
-            this.showEditarPeriodo = false;
-            this.showEliminarPeriodo = true;
-            this.showConsultarPeriodo = false;
-        },
-        consultarPeriodo(){
-            this.showCrearPeriodo = false;
-            this.showEditarPeriodo = false;
-            this.showEliminarPeriodo = false;
-            this.showConsultarPeriodo = true;
-        },
-        toggleUserMenu() {
-            this.showUserMenu = !this.showUserMenu;
+        cambiarEstadoPeriodo(accion) {
+            this.limpiaCampos();
+            this.showCrearPeriodo = (accion === 'crear');
+            this.showEditarPeriodo = (accion === 'editar');
+            this.showEliminarPeriodo = (accion === 'eliminar');
+            this.showConsultarPeriodo = (accion === 'consultar');
         },
         formatearFecha(fechaString) {
             const fecha = new Date(fechaString);
@@ -99,19 +80,28 @@ export default {
         },
         async consultarPeriodos(nombrePeriodo) {
             try {
-                const response = await fetch(`http://localhost:3000/periodoAcademico/${nombrePeriodo}`);
-                const data = await response.json();
+                if (nombrePeriodo=="") {
+                    console.warn('El nombre del periodo académico es requerido');
+                    this.tablaVacia= false;
+                    return;
+                }else{
+                    const response = await fetch(`http://localhost:3000/periodoAcademico/${nombrePeriodo}`);
+                    const data = await response.json();
 
-                if (data.length > 0) {
-                    // Formatear fechas de inicio y fin
-                    data[0].fecha_inicio = this.formatearFecha(data[0].fecha_inicio);
-                    data[0].fecha_final = this.formatearFecha(data[0].fecha_final);
+                    if (data.length > 0) {
+                        // Formatear fechas de inicio y fin
+                        data[0].fecha_inicio = this.formatearFecha(data[0].fecha_inicio);
+                        data[0].fecha_final = this.formatearFecha(data[0].fecha_final);
 
-                    this.periodos = data;
-                    this.nombrePeriodo = '';
-                } else {
-                    console.warn(`No se encontró ningún período académico con el nombre ${nombrePeriodo}`);
+                        this.periodos = data;
+                        this.tablaVacia=true;
+                        //this.nombrePeriodo = '';
+                    } else {
+                        this.tablaVacia=false;
+                        console.warn(`No se encontró ningún período académico con el nombre ${nombrePeriodo}`);
+                    }
                 }
+                
             } catch (error) {
                 console.error('Error al cargar periodos:', error);
             }
@@ -154,8 +144,7 @@ export default {
             })
                 .then(response => response.json())
                 .then(() => {
-                    this.editId = '';
-                    // Volver a cargar la lista de usuarios
+                    this.onEditOrCancel();
                     this.consultarPeriodos(periodo.nombre);
                 })
                 .catch(error => {
@@ -195,10 +184,7 @@ export default {
     <div>
         <!-- Header -->
         <HeaderComponent
-            @crearPeriodo="crearPeriodo" 
-            @editarPeriodo="editarPeriodo" 
-            @eliminarPeriodo="eliminarPeriodos" 
-            @consultarPeriodo="consultarPeriodo"
+            @cambiarEstadoPeriodo="cambiarEstadoPeriodo"
         />
     </div>
 
@@ -244,23 +230,15 @@ export default {
     </div>
 
     <!-- Editar Periodos -->
-    <div class="consultarPeriodos" v-show="showEditarPeriodo">
+    <div class="editarPeriodos" v-show="showEditarPeriodo">
         <h3>Periodos Academicos</h3>
         <div class="card">
             <div class="card-header">
                 Editar Periodo Academico
             </div>
-            <div class="card-body">
-                <form class="form-inline" v-on:submit.prevent="consultarPeriodos(nombrePeriodo)">
-                    <div class="form-group m-auto ">
-                        <label>Nombre</label>
-                        <input v-model="nombrePeriodo" type="text" class="form-control ml-sm-2 mr-sm-4 my-2" required>
-                    </div>
-                    <div class="m-auto">
-                        <button type="submit" class="btn btn-primary ml-sm-2 mr-sm-4 my-5">Consultar Periodo</button>
-                    </div>
-                </form>
-            </div>
+            <componenteConsultaPerAca 
+            @consultarPeriodos="consultarPeriodos" 
+            />
         </div>
         
         <div class="card mt">
@@ -289,7 +267,7 @@ export default {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody v-show="tablaVacia">
                             <tr v-for="periodo in periodos" :key="periodo.id_periodo">
                                 <template v-if = "editId == periodo.id_periodo"> 
                                     <td>{{ periodo.id_periodo }}</td>
@@ -310,7 +288,7 @@ export default {
                                             <i v-on:click="actualizarPeriodo(periodo)" class="bi bi-check"></i>
                                         </a>
                                         <a href="#" class="icon">
-                                            <i v-on:click="onCancel" class="bi bi-x-circle"></i>
+                                            <i v-on:click="onEditOrCancel" class="bi bi-x-circle"></i>
                                         </a>
                                     </td>
                                 </template>
@@ -322,7 +300,7 @@ export default {
                                     <td>{{ periodo.estado }}</td>
                                     <td>
                                         <a href="#" class="icon">
-                                            <i v-on:click="onEdit(periodo)" >Editar</i>
+                                            <i v-on:click="onEditOrCancel(periodo)" >Editar</i>
                                         </a>
                                     </td>
                                 </template>
@@ -335,23 +313,15 @@ export default {
     </div>
 
     <!-- Eliminar Periodos -->
-    <div class="consultarPeriodos" v-show="showEliminarPeriodo">
+    <div class="eliminarPeriodos" v-show="showEliminarPeriodo">
         <h3>Periodos Academicos</h3>
         <div class="card">
             <div class="card-header">
                 Eliminar Periodo Academico
             </div>
-            <div class="card-body">
-                <form class="form-inline" v-on:submit.prevent="consultarPeriodos(nombrePeriodo)">
-                    <div class="form-group m-auto ">
-                        <label>Nombre</label>
-                        <input v-model="nombrePeriodo" type="text" class="form-control ml-sm-2 mr-sm-4 my-2" required>
-                    </div>
-                    <div class="m-auto">
-                        <button type="submit" class="btn btn-primary ml-sm-2 mr-sm-4 my-5">Consultar Periodo</button>
-                    </div>
-                </form>
-            </div>
+            <componenteConsultaPerAca 
+            @consultarPeriodos="consultarPeriodos"
+            />
         </div>
         
         <div class="card mt">
@@ -380,7 +350,7 @@ export default {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody v-show="tablaVacia">
                             <tr v-for="periodo in periodos" :key="periodo.id_periodo">
                                 <td>{{ periodo.id_periodo }}</td>
                                 <td>{{ periodo.nombre }}</td>
@@ -410,23 +380,9 @@ export default {
             <div class="card-header">
                 Consultar Periodo Academico
             </div>
-            <div class="card-body">
-                <form class="form-inline" v-on:submit.prevent="consultarPeriodos(nombrePeriodo)">
-                    <ul class="navbar-nav m-auto">
-                        <li class="nav-item">
-                            <div class="form-group">
-                                <label class="form ml-sm-2 mr-sm-4 my-2">Nombre</label>
-                                <input v-model="nombrePeriodo" type="text" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
-                            </div>
-                        </li>
-                        <li class="nav-item">
-                            <div class="m-auto">
-                                <button type="submit" class="btn btn-primary ml-sm-2 mr-sm-4 my-5">Consultar Periodo</button>
-                            </div>
-                        </li>
-                    </ul>
-                </form>
-            </div>
+            <componenteConsultaPerAca 
+            @consultarPeriodos="consultarPeriodos"
+            />
         </div>
         
         <div class="card mt">
@@ -452,7 +408,7 @@ export default {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody v-show="tablaVacia">
                             <tr v-for="periodo in periodos">
                                 <td>{{ periodo.id_periodo }}</td>
                                 <td>{{ periodo.nombre }}</td>
