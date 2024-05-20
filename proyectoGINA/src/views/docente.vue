@@ -1,12 +1,10 @@
 <script>
 import HeaderComponent from '../views/header.vue';
-import componenteConsulta from '../views/componenteConsultaDoc.vue';
 export default {
-    
     components: {
-        HeaderComponent,
-        componenteConsulta
+        HeaderComponent
     },
+
     data() {
         
         return {
@@ -31,18 +29,6 @@ export default {
                 { id: 2, nombre: 'CNT' }
             ],
             area:'',
-            estado:'',
-            tiposEstados: [
-                { id: 1, nombre: 'activo' },
-                { id: 2, nombre: 'inactivo' }
-            ],
-            idUsuario:0,
-            usuario:'',
-            contrasena:'',
-            docentes:[],
-            usuarios:[],
-            parametro:'',
-            tablaVacia:true,
             showUserMenu: false,
             showPeriodoDocOptions: false,
             showCrearDocente: false,
@@ -52,12 +38,6 @@ export default {
         };
     },
     methods: {
-        onEdit(docente){
-            this.editId = docente.id_docente;
-        },
-        onCancel(){
-            this.editId = '';
-        },
         showOptionsDoc(){
             this.showPeriodoDocOptions = !this.showPeriodoDocOptions;
         },
@@ -88,104 +68,64 @@ export default {
         toggleUserMenu() {
             this.showUserMenu = !this.showUserMenu;
         },
-        async cargarDocente(parametro) {
-            try {
-                if(parametro==""){
-                    console.warn("parametro vacio")
-                    this.tablaVacia=true;
-                }else{
-                    const response = await fetch(`http://localhost:3000/cargarDocente/${parametro}`);
-                    const data = await response.json();
-
-                if (data.length > 0) {
-                    this.docentes = data;
-                    this.tablaVacia=false;
-                    
-                } else {
-                    this.tablaVacia=true;
-                    console.warn(`No se encontró ningún docente con:  ${parametro}`);
-                }
-                }
-                
-            } catch (error) {
-                console.error('Error al cargar Docentes:', error);
-            }
+        cargarProductos() {
+            fetch('http://localhost:3000/productos')
+                .then(response => response.json())
+                .then(data => {
+                    this.productos = data;
+                })
+                .catch(error => {
+                    console.error('Error al cargar productos:', error);
+                });
         },
-        async agregarDocente() {
-        try {
-        const idUsuario = await this.agregarUsuario();
-        const nuevoDocente = {
-            nombres: this.nombres,
-            apellidos: this.apellidos,
-            tipoId: this.tipoId,
-            numeroId: this.numeroId,
-            tipoDocente: this.tipoDocente,
-            tipoContrato: this.tipoContrato,
-            area: this.area,
-            estado: this.estado,
-            usuario: idUsuario
-        };
+        agregarDocente() {
+            const nuevoPeriodo = {
+                nombre: this.nombrePeriodo,
+                fechaInicio: this.fechaInicio,
+                fechafin: this.fechaFin,
+                estado: 'activo'
+            };
+            fetch('http://localhost:3000/periodoAcademico', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(nuevoPeriodo)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Si la solicitud es exitosa, actualiza la lista de usuarios
+                    this.periodos.push(data);
 
-        const response = await fetch('http://localhost:3000/crearDocente', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(nuevoDocente)
-        });
-
-        const data = await response.json();
-        
-
-    } catch (error) {
-        console.error('Error al agregar Docentes:', error);
-    }
+                    // Limpia los campos de entrada
+                    this.nombrePeriodo = '';
+                    this.fechaInicio = '';
+                    this.fechaFin = '';
+                })
+                .catch(error => {
+                    console.error('Error al agregar periodo academico:', error);
+                });
         },
-
-        async agregarUsuario() {
-        try {
-        const nuevoUsuario = {
-            usuario: this.usuario,
-            contra: this.contrasena
-        };
-
-        const response = await fetch('http://localhost:3000/crearUsuario', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(nuevoUsuario)
-        });
-
-        const data = await response.json();
-        this.idUsuario = data.id;
-        this.usuarios.push(data);
-        return data.id;
-
-    } catch (error) {
-        console.error('Error al agregar Usuario:', error);
-        throw error;
-    }
-        },
-        actualizarDocente(docente) {
-            fetch(`http://localhost:3000/actualizarDocente/${docente.id_docente}`, {
+        actualizarProducto(producto) {
+            fetch(`http://localhost:3000/productos/${producto.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(docente)
+                body: JSON.stringify(producto)
             })
                 .then(response => response.json())
                 .then(() => {
                     this.editId = '';
-                    this.cargarDocente(docente.identificacion);
+                    // Volver a cargar la lista de usuarios
+                    this.cargarProductos();
                 })
                 .catch(error => {
-                    console.error('Error al actualizar el docente:', error);
+                    console.error('Error al actualizar usuario:', error);
                 });
         },
-        borrarDocente(id) {
-            fetch(`http://localhost:3000/borrarDocente/${id}`, {
+        eliminarProducto(id) {
+            fetch(`http://localhost:3000/productos/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -193,22 +133,19 @@ export default {
             })
                 .then(response => response.json())
                 .then(() => {
-                    const index = this.docentes.findIndex(docente => docente.id_docente === id);
+                    const index = this.productos.findIndex(producto => producto.id === id);
                     if (index !== -1) {
-                        this.docentes.splice(index, 1);
+                        this.productos.splice(index, 1);
                     }
-                    alert("Docente eliminado con exito");
+                    alert("Producto eliminado con exito");
+                    // Volver a cargar la lista de usuarios
+                    this.cargarProductos();
                 })
                 .catch(error => {
-                    console.error('Error al eliminar docente:', error);
+                    console.error('Error al eliminar producto:', error);
                 });
         },
-        validarEliminar(id){
-            if(confirm("¿Está seguro que desea eliminar el docente?")){
-                this.borrarDocente(id);
-            }
-        }
-        },
+    },
 };
 
 </script>
@@ -283,29 +220,8 @@ export default {
                             </div>
                         </li>
                         <li class="nav-item">
-                            <div class="form-group">
-                                <label class="form ml-sm-2 mr-sm-4 my-2">Estado</label>
-                                <select class="form-control w-100 ml-sm-2 mr-sm-4 my-2" v-model="estado">
-                                <option v-for="tipo in tiposEstados" :key="tipo.id"  :value="tipo.nombre">{{ tipo.nombre }}</option>
-                                </select>
-                            </div>
-                        </li>
-                        
-                        <li class="nav-item">
-                            <div class="form-group">
-                                <label class="form ml-sm-2 mr-sm-4 my-2">Usuario</label>
-                                <input v-model="usuario" type="text" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
-                            </div>
-                        </li>
-                        <li class="nav-item">
-                            <div class="form-group">
-                                <label class="form ml-sm-2 mr-sm-4 my-2">Contraseña</label>
-                                <input v-model="contrasena" type="password" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
-                            </div>
-                        </li>
-                        <li class="nav-item">
                             <div class="m-auto">
-                                <button type="submit" class="btn btn-primary ml-sm-2 mr-sm-4 my-5">Agregar Docente</button>
+                                <button type="submit" class="btn btn-primary ml-sm-2 mr-sm-4 my-5">Agregar Periodo</button>
                             </div>
                         </li>
                         
@@ -314,221 +230,6 @@ export default {
             </div>
         </div>
     </div>
-    <div  v-show="showEditarDocente">
-        <h3>Docentes</h3>
-        <componenteConsulta @cargarDocente="cargarDocente" />
-        
-        <div class="card mt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">
-                                    Identificación
-                                </th>
-                                <th>
-                                    Tipo identificación
-                                </th>
-                                <th>
-                                    Nombres
-                                </th>
-                                <th>
-                                    Apellidos
-                                </th>
-                                <th>
-                                    Tipo de Docente
-                                </th>
-                                <th>
-                                    Contrato
-                                </th>
-                                <th>
-                                    Area
-                                </th>
-                                <th>
-                                    Estado
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody v-show="!tablaVacia">
-                            <tr v-for="docente in docentes" :key="docente.id_docente">
-                                <template v-if = "editId == docente.id_docente"> 
-                                    
-                                    <td><input type="number" v-model="docente.identificacion" class="form-control" required></td>
-                                    <td>
-                                        <select class="form-control w-100 ml-sm-2 mr-sm-4 my-2" v-model="docente.tipo_identificacion">
-                                            <option v-for="tipo in tiposIDs" :key="tipo.id" :value="tipo.nombre">{{ tipo.nombre }}</option>
-                                        </select> 
-                                    </td>
-                                    <td><input type="text" v-model="docente.nombres" class="form-control" required></td>
-                                    <td><input type="text" v-model="docente.apellidos" class="form-control" required></td>
-                                    
-                                    <td>
-                                        <select class="form-control w-100 ml-sm-2 mr-sm-4 my-2" v-model="docente.tipo_docente">
-                                            <option v-for="tipo in tiposDocentes" :key="tipo.id" :value="tipo.nombre">{{ tipo.nombre }}</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select class="form-control w-100 ml-sm-2 mr-sm-4 my-2" v-model="docente.tipo_contrato">
-                                            <option v-for="tipo in tiposContratos" :key="tipo.id" :value="tipo.nombre">{{ tipo.nombre }}</option>
-                                        </select>
-                                    </td><td><input type="text" v-model="docente.area_perteneciente" class="form-control" required></td>
-                                    <td>
-                                        <select class="form-control w-100 ml-sm-2 mr-sm-4 my-2" v-model="docente.estado">
-                                            <option v-for="tipo in tiposEstados" :key="tipo.id"  :value="tipo.nombre">{{ tipo.nombre }}</option>
-                                        </select>
-                                    </td>
-                                    
-                                    <td>
-                                        <a href="#" class="icon">
-                                            <i v-on:click="actualizarDocente(docente)" class="bi bi-check"></i>
-                                        </a>
-                                        <a href="#" class="icon">
-                                            <i v-on:click="onCancel" class="bi bi-x-circle"></i>
-                                        </a>
-                                    </td>
-                                </template>
-                                <template v-else>
-                                    <td>{{ docente.identificacion }}</td>
-                                    <td>{{ docente.tipo_identificacion }}</td>
-                                    <td>{{ docente.nombres}}</td>
-                                    <td>{{ docente.apellidos }}</td>
-                                    <td>{{ docente.tipo_docente }}</td>
-                                    <td>{{ docente.tipo_contrato }}</td>
-                                    <td>{{ docente.area_perteneciente }}</td>
-                                    <td>{{ docente.estado }}</td>
-                                    <td>
-                                        <a href="#" class="icon">
-                                            <i v-on:click="onEdit(docente)" >Editar</i>
-                                        </a>
-                                    </td>
-                                </template>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div  v-show="showEliminarDocente">
-        <h3>Docentes</h3>
-        <componenteConsulta @cargarDocente="cargarDocente" />
-        
-        <div class="card mt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">
-                                    Identificación
-                                </th>
-                                <th>
-                                    Tipo identificación
-                                </th>
-                                <th>
-                                    Nombres
-                                </th>
-                                <th>
-                                    Apellidos
-                                </th>
-                                <th>
-                                    Tipo de Docente
-                                </th>
-                                <th>
-                                    Contrato
-                                </th>
-                                <th>
-                                    Area
-                                </th>
-                                <th>
-                                    Estado
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody v-show="!tablaVacia">
-                            <tr v-for="docente in docentes" :key="docente.id_docente">
-                                <td>{{ docente.identificacion }}</td>
-                                <td>{{ docente.tipo_identificacion }}</td>
-                                <td>{{ docente.nombres}}</td>
-                                <td>{{ docente.apellidos }}</td>
-                                <td>{{ docente.tipo_docente }}</td>
-                                <td>{{ docente.tipo_contrato }}</td>
-                                <td>{{ docente.area_perteneciente }}</td>
-                                <td>{{ docente.estado }}</td>
-                                <td>
-                                    <a href="#" class="icon">
-                                        <i v-on:click="validarEliminar(docente.id_docente)" >Eliminar</i>
-                                    </a>
-                                </td>
-                                <div>
-
-                                </div>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div  v-show="showConsultarDocente">
-    <h3>Docentes</h3>
-    <componenteConsulta @cargarDocente="cargarDocente" />
-        <div class="card mt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">
-                                    Identificación
-                                </th>
-                                <th>
-                                    Tipo identificación
-                                </th>
-                                <th>
-                                    Nombres
-                                </th>
-                                <th>
-                                    Apellidos
-                                </th>
-                                <th>
-                                    Tipo de Docente
-                                </th>
-                                <th>
-                                    Contrato
-                                </th>
-                                <th>
-                                    Area
-                                </th>
-                                <th>
-                                    Estado
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody v-show="!tablaVacia">
-                            <tr v-for="docente in docentes">
-                                <td>{{ docente.identificacion }}</td>
-                                <td>{{ docente.tipo_identificacion }}</td>
-                                <td>{{ docente.nombres}}</td>
-                                <td>{{ docente.apellidos }}</td>
-                                <td>{{ docente.tipo_docente }}</td>
-                                <td>{{ docente.tipo_contrato }}</td>
-                                <td>{{ docente.area_perteneciente }}</td>
-                                <td>{{ docente.estado }}</td>
-                                
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
 </template>
 
 <style scoped>

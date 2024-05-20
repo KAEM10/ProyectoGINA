@@ -128,6 +128,50 @@ app.delete('/borrarDocente/:id', (req, res) => {
     });
 });
 
+
+
+app.post('/crearAmbiente', (req, res) => {
+    const { codigo, nombre, tipo, capacidad_estudiantes, ubicacion} = req.body;
+    connection.query('INSERT INTO ambienteaprendizaje (codigo, nombre, tipo, capacidad_estudiantes, ubicacion) VALUES (?, ?, ?, ?, ?)', [codigo, nombre, tipo, capacidad_estudiantes, ubicacion], (error, results) => {
+        if (error) throw error;
+        res.json({ message: 'ambienteaprendizaje creado', id: results.insertId });
+    });
+});
+
+
+
+app.get('/cargarAmbiente/:parametro', (req, res) => {
+    const parametro = req.params.parametro;
+    
+
+    const query = "SELECT * FROM ambienteaprendizaje WHERE codigo LIKE ? or nombre LIKE ?";
+    connection.query(query, [`${parametro}%`,`${parametro}%`], (error, results) => {
+        if (error) {
+            res.status(500).json({ error: 'Error al obtener docente' });
+        } else {
+            res.json(results);
+        }
+    });
+});
+
+
+app.put('/actualizarAmbiente/:id', (req, res) => {
+    const id = req.params.id;
+    const { nombre, tipo, capacidad_estudiantes, ubicacion} = req.body;
+    connection.query('UPDATE ambienteaprendizaje SET nombre=?, tipo=?, capacidad_estudiantes=?, ubicacion=? WHERE codigo = ?', [nombre, tipo, capacidad_estudiantes, ubicacion,id], (error, results) => {
+        if (error) throw error;
+        res.json({ message: 'ambienteaprendizaje actualizado' });
+    });
+});
+
+app.delete('/borrarAmbiente/:id', (req, res) => {
+    const id = req.params.id;
+    connection.query('DELETE FROM ambienteaprendizaje WHERE codigo = ?', [id], (error, results) => {
+        if (error) throw error;
+        res.json({ message: 'ambienteaprendizaje eliminado' });
+    });
+});
+
 app.listen(port, () => {
     console.log(`Servidor iniciado en http://localhost:${port}`);
 });

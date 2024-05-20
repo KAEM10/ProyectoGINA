@@ -33,10 +33,16 @@
                             <a class="nav-link" href="#" @click="$emit('consultarDocente')">Consultar Docente</a>
                         </div>
                     </li>
-                    <li class="nav-item">
-                        <router-link to="/ambiente" class="nav-link">
-                            <i class="bi bi-building"></i> Ambientes Academicos
+                    <li class="nav-item dropdown" @click="showOptionsAmb">
+                        <router-link to="/ambiente" class="navbar-brand">
+                            <i class="bi bi-card-text"></i> Ambientes Academicos
                         </router-link>
+                        <div v-show="showAmbienteOptions" class="desplegable">
+                            <a class="nav-link" href="#" @click="$emit('crearAmbiente')">Crear Ambiente</a>
+                            <a class="nav-link" href="#" @click="$emit('editarAmbiente')">Editar Ambiente</a>
+                            <a class="nav-link" href="#" @click="$emit('eliminarAmbiente')">Eliminar Ambiente</a>
+                            <a class="nav-link" href="#" @click="$emit('consultarAmbiente')">Consultar Ambiente</a>
+                        </div>
                     </li>
                     <li class="nav-item">
                         <router-link to="/horario" class="nav-link">
@@ -64,13 +70,15 @@ export default {
     name: 'header',
     components: {},
     emits: ['cambiarEstadoPeriodo',
-        'crearDocente','editarDocente','eliminarDocente','consultarDocente'
+        'crearDocente','editarDocente','eliminarDocente','consultarDocente',
+        'crearAmbiente','editarAmbiente','eliminarAmbiente','consultarAmbiente'
     ],
     
     data() {
         return {
             showPeriodoOptions: false,
             showDocenteOptions: false,
+            showAmbienteOptions: false,
             showUserMenu: false,
         };
     },
@@ -80,6 +88,9 @@ export default {
         },
         showOptionsDoc() {
             this.showDocenteOptions = !this.showDocenteOptions;
+        },
+        showOptionsAmb() {
+            this.showAmbienteOptions = !this.showAmbienteOptions;
         },
         toggleUserMenu() {
             this.showUserMenu = !this.showUserMenu;
