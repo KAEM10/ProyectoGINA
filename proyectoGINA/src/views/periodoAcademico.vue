@@ -45,16 +45,17 @@ export default {
                 const nuevaFecha = new Date(fecha);
                 nuevaFecha.setMonth(nuevaFecha.getMonth() + meses);
 
-                // Ajuste para manejar desbordamiento de mes
+                // Verificar si la fecha resultante es válida para el mes y año
                 if (nuevaFecha.getDate() !== fecha.getDate()) {
+                    // Ajustar al último día del mes anterior
                     nuevaFecha.setDate(0);
                 }
 
-                const dia = (nuevaFecha.getDate() + 1).toString().padStart(2, '0');
+                const dia = nuevaFecha.getDate().toString().padStart(2, '0');
                 const mes = (nuevaFecha.getMonth() + 1).toString().padStart(2, '0');
                 return `${nuevaFecha.getFullYear()}-${mes}-${dia}`;
             };
-
+            
             // Fecha de fin en 3 meses
             this.fechas.push(sumarMeses(fechaInicio, 3));
 
