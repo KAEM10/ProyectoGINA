@@ -12,9 +12,6 @@ export default {
 
 <template>
   <div class="card">
-    <div class="card-header">
-      Consultar Ambientes
-    </div>
     <div class="card-body">
       <form class="form-inline">
         <ul class="navbar-nav m-auto">
