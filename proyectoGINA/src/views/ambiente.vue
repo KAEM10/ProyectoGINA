@@ -32,32 +32,12 @@ export default {
         };
     },
     methods: {
-        crearAmbiente() {
-            this.showCrearAmbiente = true;
-            this.showEditarAmbiente = false;
-            this.showEliminarAmbiente = false;
-            this.showConsultarAmbiente = false;
-        },
-        editarAmbiente() {
-            this.showCrearAmbiente = false;
-            this.showEditarAmbiente = true;
-            this.showEliminarAmbiente = false;
-            this.showConsultarAmbiente = false;
-        },
-        eliminarAmbiente() {
-            this.showCrearAmbiente = false;
-            this.showEditarAmbiente = false;
-            this.showEliminarAmbiente = true;
-            this.showConsultarAmbiente = false;
-        },
-        consultarAmbiente() {
-            this.showCrearAmbiente = false;
-            this.showEditarAmbiente = false;
-            this.showEliminarAmbiente = false;
-            this.showConsultarAmbiente = true;
-        },
-        toggleUserMenu() {
-            this.showUserMenu = !this.showUserMenu;
+        cambiarEstadoAmbiente(accion) {
+            this.limpiaCampos();
+            this.showCrearAmbiente = (accion === 'crear');
+            this.showEditarAmbiente = (accion === 'editar');
+            this.showEliminarAmbiente = (accion === 'eliminar');
+            this.showConsultarAmbiente = (accion === 'consultar');
         },
         onEditOrCancel(ambiente) {
             this.editId = ambiente ? ambiente.codigo : '';
@@ -174,8 +154,7 @@ export default {
 <template>
     <div>
         <!-- Header -->
-        <HeaderComponent @crearAmbiente="crearAmbiente" @editarAmbiente="editarAmbiente"
-            @eliminarAmbiente="eliminarAmbiente" @consultarAmbiente="consultarAmbiente" />
+        <HeaderComponent @cambiarEstado="cambiarEstadoAmbiente" />
     </div>
 
     <!-- Crear Periodos -->
@@ -316,7 +295,7 @@ export default {
     </div>
 
     <!-- Eliminar Periodos -->
-    <div class="eliminarAmbiente" v-show="eliminarAmbiente">
+    <div class="eliminarAmbiente" v-show="showEliminarAmbiente">
         <h3>Ambientes</h3>
         <div class="card">
             <div class="card-header">

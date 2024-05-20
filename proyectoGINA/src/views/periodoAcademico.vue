@@ -185,7 +185,7 @@ export default {
     <div>
         <!-- Header -->
         <HeaderComponent
-            @cambiarEstadoPeriodo="cambiarEstadoPeriodo"
+            @cambiarEstado="cambiarEstadoPeriodo"
         />
     </div>
 

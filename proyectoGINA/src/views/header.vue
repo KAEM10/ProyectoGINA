@@ -16,10 +16,10 @@
                             <i class="bi bi-card-text"></i> Periodo Academico
                         </router-link>
                         <div v-show="showPeriodoOptions" class="desplegable">
-                            <a class="nav-link" href="#" @click="$emit('cambiarEstadoPeriodo', 'crear')">Crear Periodo</a>
-                            <a class="nav-link" href="#" @click="$emit('cambiarEstadoPeriodo', 'editar')">Editar Periodo</a>
-                            <a class="nav-link" href="#" @click="$emit('cambiarEstadoPeriodo', 'eliminar')">Eliminar Periodo</a>
-                            <a class="nav-link" href="#" @click="$emit('cambiarEstadoPeriodo', 'consultar')">Consultar Periodo</a>
+                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'crear')">Crear Periodo</a>
+                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'editar')">Editar Periodo</a>
+                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'eliminar')">Eliminar Periodo</a>
+                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'consultar')">Consultar Periodo</a>
                         </div>
                     </li>
                     <li class="nav-item dropdown" @click="showOptionsDoc">
@@ -27,10 +27,10 @@
                             <i class="bi bi-card-text"></i> Docentes
                         </router-link>
                         <div v-show="showDocenteOptions" class="desplegable">
-                            <a class="nav-link" href="#" @click="$emit('crearDocente')">Crear Docente</a>
-                            <a class="nav-link" href="#" @click="$emit('editarDocente')">Editar Docente</a>
-                            <a class="nav-link" href="#" @click="$emit('eliminarDocente')">Eliminar Docente</a>
-                            <a class="nav-link" href="#" @click="$emit('consultarDocente')">Consultar Docente</a>
+                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'crear')">Crear Docente</a>
+                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'editar')">Editar Docente</a>
+                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'eliminar')">Eliminar Docente</a>
+                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'consultar')">Consultar Docente</a>
                         </div>
                     </li>
                     <li class="nav-item dropdown" @click="showOptionsAmb">
@@ -38,10 +38,10 @@
                             <i class="bi bi-card-text"></i> Ambientes Academicos
                         </router-link>
                         <div v-show="showAmbienteOptions" class="desplegable">
-                            <a class="nav-link" href="#" @click="$emit('crearAmbiente')">Crear Ambiente</a>
-                            <a class="nav-link" href="#" @click="$emit('editarAmbiente')">Editar Ambiente</a>
-                            <a class="nav-link" href="#" @click="$emit('eliminarAmbiente')">Eliminar Ambiente</a>
-                            <a class="nav-link" href="#" @click="$emit('consultarAmbiente')">Consultar Ambiente</a>
+                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'crear')">Crear Ambiente</a>
+                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'editar')">Editar Ambiente</a>
+                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'eliminar')">Eliminar Ambiente</a>
+                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'consultar')">Consultar Ambiente</a>
                         </div>
                     </li>
                     <li class="nav-item">
@@ -69,10 +69,7 @@
 export default {
     name: 'header',
     components: {},
-    emits: ['cambiarEstadoPeriodo',
-        'crearDocente','editarDocente','eliminarDocente','consultarDocente',
-        'crearAmbiente','editarAmbiente','eliminarAmbiente','consultarAmbiente'
-    ],
+    emits: ['cambiarEstado'],
     
     data() {
         return {

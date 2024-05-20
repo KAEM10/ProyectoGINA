@@ -1,8 +1,10 @@
 <script>
 import HeaderComponent from '../views/header.vue';
+import componenteConsulta from '../views/componenteConsultaDoc.vue';
 export default {
     components: {
-        HeaderComponent
+        HeaderComponent,
+        componenteConsulta
     },
 
     data() {
@@ -38,35 +40,18 @@ export default {
         };
     },
     methods: {
-        showOptionsDoc(){
-            this.showPeriodoDocOptions = !this.showPeriodoDocOptions;
+        limpiaCampos(){
+            this.nombrePeriodo = '';
+            this.fechaInicio = '';
+            this.fechaFin = '';
+            this.periodos = [];
         },
-        crearDocente(){
-            this.showCrearDocente = true;
-            this.showEditarDocente = false;
-            this.showEliminarDocente = false;
-            this.showConsultarDocente = false;
-        },
-        editarDocente(){
-            this.showCrearDocente = false;
-            this.showEditarDocente = true;
-            this.showEliminarDocente = false;
-            this.showConsultarDocente = false;
-        },
-        eliminarDocente(){
-            this.showCrearDocente = false;
-            this.showEditarDocente = false;
-            this.showEliminarDocente = true;
-            this.showConsultarDocente = false;
-        },
-        consultarDocente(){
-            this.showCrearDocente = false;
-            this.showEditarDocente = false;
-            this.showEliminarDocente = false;
-            this.showConsultarDocente = true;
-        },
-        toggleUserMenu() {
-            this.showUserMenu = !this.showUserMenu;
+        cambiarEstadoDocente(accion) {
+            this.limpiaCampos();
+            this.showCrearDocente = (accion === 'crear');
+            this.showEditarDocente = (accion === 'editar');
+            this.showEliminarDocente = (accion === 'eliminar');
+            this.showConsultarDocente = (accion === 'consultar');
         },
         cargarProductos() {
             fetch('http://localhost:3000/productos')
@@ -149,14 +134,10 @@ export default {
 };
 
 </script>
-
 <template>
     <div>
         <HeaderComponent
-            @crearDocente="crearDocente" 
-            @editarDocente="editarDocente" 
-            @eliminarDocente="eliminarDocente" 
-            @consultarDocente="consultarDocente"
+        @cambiarEstado="cambiarEstadoDocente"
         />
     </div>
     <div class="crearDocente" v-show="showCrearDocente">
@@ -221,7 +202,7 @@ export default {
                         </li>
                         <li class="nav-item">
                             <div class="m-auto">
-                                <button type="submit" class="btn btn-primary ml-sm-2 mr-sm-4 my-5">Agregar Periodo</button>
+                                <button type="submit" class="btn btn-primary ml-sm-2 mr-sm-4 my-5">Agregar Docente</button>
                             </div>
                         </li>
                         
@@ -230,8 +211,6 @@ export default {
             </div>
         </div>
     </div>
-<<<<<<< HEAD
-=======
     <div  v-show="showEditarDocente">
         <h3>Docentes</h3>
         <div class="card-header">
@@ -456,7 +435,6 @@ export default {
     </div>
 
 
->>>>>>> e5ea5a13ddc1e10e66ac81774332f0ec6be2230e
 </template>
 
 <style scoped>
