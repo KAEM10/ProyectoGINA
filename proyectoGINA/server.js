@@ -96,6 +96,38 @@ app.post('/crearUsuario', (req, res) => {
     });
 });
 
+app.get('/cargarDocente/:parametro', (req, res) => {
+    const parametro = req.params.parametro;
+    
+
+    const query = "SELECT * FROM docente WHERE nombres LIKE ? or apellidos LIKE ? or identificacion LIKE ?";
+    connection.query(query, [`${parametro}%`,`${parametro}%`,`${parametro}%`], (error, results) => {
+        if (error) {
+            res.status(500).json({ error: 'Error al obtener docente' });
+        } else {
+            res.json(results);
+        }
+    });
+});
+
+
+app.put('/actualizarDocente/:id', (req, res) => {
+    const id = req.params.id;
+    const { id_docente,nombres, apellidos, tipo_identificacion, identificacion,tipo_docente,tipo_contrato,area_perteneciente,estado,id_usuario} = req.body;
+    connection.query('UPDATE docente SET nombres=?, apellidos=?, tipo_identificacion=?, identificacion=?,tipo_docente=?,tipo_contrato=?,area_perteneciente=?,estado=? WHERE id_docente = ?', [nombres, apellidos, tipo_identificacion, identificacion,tipo_docente,tipo_contrato,area_perteneciente,estado,id_docente], (error, results) => {
+        if (error) throw error;
+        res.json({ message: 'periodoAcademico actualizado' });
+    });
+});
+
+app.delete('/borrarDocente/:id', (req, res) => {
+    const id = req.params.id;
+    connection.query('DELETE FROM docente WHERE id_docente = ?', [id], (error, results) => {
+        if (error) throw error;
+        res.json({ message: 'Docente eliminado' });
+    });
+});
+
 app.listen(port, () => {
     console.log(`Servidor iniciado en http://localhost:${port}`);
 });

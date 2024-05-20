@@ -402,7 +402,7 @@ export default {
             </div>
         </div>
     </div>
-
+    
     <!-- Consultar Periodos -->
     <div class="consultarPeriodos" v-show="showConsultarPeriodo">
         <h3>Periodos Academicos</h3>
