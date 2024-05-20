@@ -230,6 +230,233 @@ export default {
             </div>
         </div>
     </div>
+<<<<<<< HEAD
+=======
+    <div  v-show="showEditarDocente">
+        <h3>Docentes</h3>
+        <div class="card-header">
+            Editar Docentes
+        </div>
+        <componenteConsulta @cargarDocente="cargarDocente" />
+        
+        <div class="card mt">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">
+                                    Identificación
+                                </th>
+                                <th>
+                                    Tipo identificación
+                                </th>
+                                <th>
+                                    Nombres
+                                </th>
+                                <th>
+                                    Apellidos
+                                </th>
+                                <th>
+                                    Tipo de Docente
+                                </th>
+                                <th>
+                                    Contrato
+                                </th>
+                                <th>
+                                    Area
+                                </th>
+                                <th>
+                                    Estado
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody v-show="!tablaVacia">
+                            <tr v-for="docente in docentes" :key="docente.id_docente">
+                                <template v-if = "editId == docente.id_docente"> 
+                                    
+                                    <td><input type="number" v-model="docente.identificacion" class="form-control" required></td>
+                                    <td>
+                                        <select class="form-control w-100 ml-sm-2 mr-sm-4 my-2" v-model="docente.tipo_identificacion">
+                                            <option v-for="tipo in tiposIDs" :key="tipo.id" :value="tipo.nombre">{{ tipo.nombre }}</option>
+                                        </select> 
+                                    </td>
+                                    <td><input type="text" v-model="docente.nombres" class="form-control" required></td>
+                                    <td><input type="text" v-model="docente.apellidos" class="form-control" required></td>
+                                    
+                                    <td>
+                                        <select class="form-control w-100 ml-sm-2 mr-sm-4 my-2" v-model="docente.tipo_docente">
+                                            <option v-for="tipo in tiposDocentes" :key="tipo.id" :value="tipo.nombre">{{ tipo.nombre }}</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-control w-100 ml-sm-2 mr-sm-4 my-2" v-model="docente.tipo_contrato">
+                                            <option v-for="tipo in tiposContratos" :key="tipo.id" :value="tipo.nombre">{{ tipo.nombre }}</option>
+                                        </select>
+                                    </td><td><input type="text" v-model="docente.area_perteneciente" class="form-control" required></td>
+                                    <td>
+                                        <select class="form-control w-100 ml-sm-2 mr-sm-4 my-2" v-model="docente.estado">
+                                            <option v-for="tipo in tiposEstados" :key="tipo.id"  :value="tipo.nombre">{{ tipo.nombre }}</option>
+                                        </select>
+                                    </td>
+                                    
+                                    <td>
+                                        <a href="#" class="icon">
+                                            <i v-on:click="actualizarDocente(docente)" class="bi bi-check"></i>
+                                        </a>
+                                        <a href="#" class="icon">
+                                            <i v-on:click="onCancel" class="bi bi-x-circle"></i>
+                                        </a>
+                                    </td>
+                                </template>
+                                <template v-else>
+                                    <td>{{ docente.identificacion }}</td>
+                                    <td>{{ docente.tipo_identificacion }}</td>
+                                    <td>{{ docente.nombres}}</td>
+                                    <td>{{ docente.apellidos }}</td>
+                                    <td>{{ docente.tipo_docente }}</td>
+                                    <td>{{ docente.tipo_contrato }}</td>
+                                    <td>{{ docente.area_perteneciente }}</td>
+                                    <td>{{ docente.estado }}</td>
+                                    <td>
+                                        <a href="#" class="icon">
+                                            <i v-on:click="onEdit(docente)" >Editar</i>
+                                        </a>
+                                    </td>
+                                </template>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div  v-show="showEliminarDocente">
+        <h3>Docentes</h3>
+        <div class="card-header">
+            Eliminar Docentes
+        </div>
+        <componenteConsulta @cargarDocente="cargarDocente" />
+        
+        <div class="card mt">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">
+                                    Identificación
+                                </th>
+                                <th>
+                                    Tipo identificación
+                                </th>
+                                <th>
+                                    Nombres
+                                </th>
+                                <th>
+                                    Apellidos
+                                </th>
+                                <th>
+                                    Tipo de Docente
+                                </th>
+                                <th>
+                                    Contrato
+                                </th>
+                                <th>
+                                    Area
+                                </th>
+                                <th>
+                                    Estado
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody v-show="!tablaVacia">
+                            <tr v-for="docente in docentes" :key="docente.id_docente">
+                                <td>{{ docente.identificacion }}</td>
+                                <td>{{ docente.tipo_identificacion }}</td>
+                                <td>{{ docente.nombres}}</td>
+                                <td>{{ docente.apellidos }}</td>
+                                <td>{{ docente.tipo_docente }}</td>
+                                <td>{{ docente.tipo_contrato }}</td>
+                                <td>{{ docente.area_perteneciente }}</td>
+                                <td>{{ docente.estado }}</td>
+                                <td>
+                                    <a href="#" class="icon">
+                                        <i v-on:click="validarEliminar(docente.id_docente)" >Eliminar</i>
+                                    </a>
+                                </td>
+                                <div>
+
+                                </div>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div  v-show="showConsultarDocente">
+    <h3>Docentes</h3>
+    <div class="card-header">
+      Consultar Docentes
+    </div>
+    <componenteConsulta @cargarDocente="cargarDocente" />
+        <div class="card mt">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">
+                                    Identificación
+                                </th>
+                                <th>
+                                    Tipo identificación
+                                </th>
+                                <th>
+                                    Nombres
+                                </th>
+                                <th>
+                                    Apellidos
+                                </th>
+                                <th>
+                                    Tipo de Docente
+                                </th>
+                                <th>
+                                    Contrato
+                                </th>
+                                <th>
+                                    Area
+                                </th>
+                                <th>
+                                    Estado
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody v-show="!tablaVacia">
+                            <tr v-for="docente in docentes">
+                                <td>{{ docente.identificacion }}</td>
+                                <td>{{ docente.tipo_identificacion }}</td>
+                                <td>{{ docente.nombres}}</td>
+                                <td>{{ docente.apellidos }}</td>
+                                <td>{{ docente.tipo_docente }}</td>
+                                <td>{{ docente.tipo_contrato }}</td>
+                                <td>{{ docente.area_perteneciente }}</td>
+                                <td>{{ docente.estado }}</td>
+                                
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+>>>>>>> e5ea5a13ddc1e10e66ac81774332f0ec6be2230e
 </template>
 
 <style scoped>
