@@ -2,11 +2,11 @@
 import HeaderComponent from '../views/header.vue';
 import componenteConsulta from '../views/componenteConsultaDoc.vue';
 export default {
+    
     components: {
         HeaderComponent,
         componenteConsulta
     },
-
     data() {
         
         return {
@@ -31,6 +31,18 @@ export default {
                 { id: 2, nombre: 'CNT' }
             ],
             area:'',
+            estado:'',
+            tiposEstados: [
+                { id: 1, nombre: 'activo' },
+                { id: 2, nombre: 'inactivo' }
+            ],
+            idUsuario:0,
+            usuario:'',
+            contrasena:'',
+            docentes:[],
+            usuarios:[],
+            parametro:'',
+            tablaVacia:true,
             showUserMenu: false,
             showPeriodoDocOptions: false,
             showCrearDocente: false,
@@ -40,11 +52,21 @@ export default {
         };
     },
     methods: {
+        onEditOrCancel(docente) {
+            this.editId = docente ? docente.id_docente : '';
+        },
         limpiaCampos(){
-            this.nombrePeriodo = '';
-            this.fechaInicio = '';
-            this.fechaFin = '';
-            this.periodos = [];
+            this.nombres='';
+            this.apellidos='';
+            this.tipoId='';
+            this.numeroId='';
+            this.tipoDocente='';
+            this.tipoContrato='';
+            this.area='';
+            this.estado='';
+            this.usuario='';
+            this.contrasena='';
+            this.docentes=[];
         },
         cambiarEstadoDocente(accion) {
             this.limpiaCampos();
@@ -52,9 +74,6 @@ export default {
             this.showEditarDocente = (accion === 'editar');
             this.showEliminarDocente = (accion === 'eliminar');
             this.showConsultarDocente = (accion === 'consultar');
-        },
-        onEditOrCancel(ambiente) {
-            this.editId = ambiente ? ambiente.codigo : '';
         },
         async cargarDocente(parametro) {
             try {
@@ -175,11 +194,12 @@ export default {
             if(confirm("¿Está seguro que desea eliminar el docente?")){
                 this.borrarDocente(id);
             }
+        }
         },
-    },
 };
 
 </script>
+
 <template>
     <div>
         <HeaderComponent
@@ -244,6 +264,27 @@ export default {
                             <div class="form-group">
                                 <label class="form ml-sm-2 mr-sm-4 my-2">Area perteneciente</label>
                                 <input v-model="area" type="text" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <div class="form-group">
+                                <label class="form ml-sm-2 mr-sm-4 my-2">Estado</label>
+                                <select class="form-control w-100 ml-sm-2 mr-sm-4 my-2" v-model="estado">
+                                <option v-for="tipo in tiposEstados" :key="tipo.id"  :value="tipo.nombre">{{ tipo.nombre }}</option>
+                                </select>
+                            </div>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <div class="form-group">
+                                <label class="form ml-sm-2 mr-sm-4 my-2">Usuario</label>
+                                <input v-model="usuario" type="text" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <div class="form-group">
+                                <label class="form ml-sm-2 mr-sm-4 my-2">Contraseña</label>
+                                <input v-model="contrasena" type="password" class="form-control w-100 ml-sm-2 mr-sm-4 my-2" required>
                             </div>
                         </li>
                         <li class="nav-item">

@@ -49,22 +49,23 @@ export default {
             this.estudiantes = '';
             this.ubicacion = '';
             this.tipo = [];
+            this.ambientes = [];
         },
         async cargarAmbiente(parametro) {
             try {
                 if (parametro == "") {
                     console.warn("parametro vacio")
-                    this.tablaVacia = true;
+                    this.tablaVacia = false;
                 } else {
                     const response = await fetch(`http://localhost:3000/cargarAmbiente/${parametro}`);
                     const data = await response.json();
 
                     if (data.length > 0) {
                         this.ambientes = data;
-                        this.tablaVacia = false;
+                        this.tablaVacia = true;
 
                     } else {
-                        this.tablaVacia = true;
+                        this.tablaVacia = false;
                         console.warn(`No se encontró ningún docente con:  ${parametro}`);
                     }
                 }
@@ -78,7 +79,7 @@ export default {
             const nuevoAmbiente = {
                 codigo: this.codigo,
                 nombre: this.nombre,
-                tipo: this.tipoo,
+                tipo: this.tipo,
                 capacidad_estudiantes: this.capacidad,
                 ubicacion: this.ubicacion,
             };
@@ -258,7 +259,9 @@ export default {
                                 <template v-if="editId == ambiente.codigo">
                                     <td>{{ ambiente.codigo }}</td>
                                     <td><input type="text" v-model="ambiente.nombre" class="form-control"></td>
-                                    <td><input type="text" v-model="ambiente.tipo" class="form-control" required></td>
+                                    <td><select class="form-control w-100 ml-sm-2 mr-sm-4 my-2" v-model="ambiente.tipo">
+                                    <option v-for="tip in tipos" :key="tip.id" :value="tip.nombre">{{ tip.nombre }}</option>
+                                </select></td>
                                     <td><input type="text" v-model="ambiente.capacidad_estudiantes"
                                             class="form-control"></td>
                                     <td><input type="text" v-model="ambiente.ubicacion" class="form-control" required>
