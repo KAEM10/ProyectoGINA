@@ -28,9 +28,7 @@
                         </router-link>
                         <div v-show="showDocenteOptions" class="desplegable">
                             <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'crear')">Crear Docente</a>
-                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'editar')">Editar Docente</a>
-                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'eliminar')">Eliminar Docente</a>
-                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'consultar')">Consultar Docente</a>
+                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'gestionar')">Gestionar Docentes</a>
                         </div>
                     </li>
                     <li class="nav-item dropdown" @click="showOptionsAmb">
