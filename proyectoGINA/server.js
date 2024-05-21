@@ -81,12 +81,25 @@ app.delete('/periodoAcademico/:id', (req, res) => {
 
 
 app.post('/crearDocente', (req, res) => {
-    const { nombres, apellidos, tipoId, numeroId,tipoDocente,tipoContrato,area,estado,usuario } = req.body;
-    connection.query('INSERT INTO docente (nombres, apellidos, tipo_identificacion, identificacion,tipo_docente,tipo_contrato,area_perteneciente,estado,id_usuario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [nombres, apellidos, tipoId, numeroId,tipoDocente,tipoContrato,area,estado,usuario], (error, results) => {
-        if (error) throw error;
-        res.json({ message: 'Docente creado', id: results.insertId });
-    });
+    const { nombres, apellidos, tipoId, numeroId, tipoDocente, tipoContrato, area, estado, usuario } = req.body;
+    
+    connection.query(
+        'INSERT INTO docente (nombres, apellidos, tipo_identificacion, identificacion, tipo_docente, tipo_contrato, area_perteneciente, estado, id_usuario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+        [nombres, apellidos, tipoId, numeroId, tipoDocente, tipoContrato, area, estado, usuario], 
+        (error, results) => {
+            if (error) {
+                // Manejar error de duplicación
+                if (error.code === 'ER_DUP_ENTRY') {
+                    return res.status(409).json({ message: 'El docente ya existe' });
+                }
+                // Manejar otros tipos de errores
+                return res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+            }
+            res.status(201).json({ message: 'Docente creado', id: results.insertId });
+        }
+    );
 });
+
 
 app.post('/crearUsuario', (req, res) => {
     const {usuario,contra } = req.body;
@@ -102,6 +115,15 @@ app.get('/cargarDocente/:parametro', (req, res) => {
 
     const query = "SELECT * FROM docente WHERE nombres LIKE ? or apellidos LIKE ? or identificacion LIKE ?";
     connection.query(query, [`${parametro}%`,`${parametro}%`,`${parametro}%`], (error, results) => {
+        if (error) {
+            res.status(500).json({ error: 'Error al obtener docente' });
+        } else {
+            res.json(results);
+        }
+    });
+});
+app.get('/cargarTablaDoc', (req, res) => {
+    connection.query('SELECT * FROM docente', (error, results) => {
         if (error) {
             res.status(500).json({ error: 'Error al obtener docente' });
         } else {
