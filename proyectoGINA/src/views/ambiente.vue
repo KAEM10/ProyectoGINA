@@ -2,8 +2,10 @@
 
 import HeaderComponent from '../views/header.vue';
 import componenteConsultaAmb from '../views/componenteConsultaAmb.vue';
+import controller from '../Controllers/controllerAmbiente';
 
 export default {
+    mixins: [controller],
     components: {
         HeaderComponent,
         componenteConsultaAmb
@@ -27,132 +29,6 @@ export default {
             showCrearAmbiente: false,
             showGestionarAmbiente: false,
         };
-    },
-    methods: {
-        cambiarEstadoAmbiente(accion) {
-            this.cargarTabla();
-            this.limpiaCampos();
-            this.showCrearAmbiente = (accion === 'crear');
-            this.showGestionarAmbiente = (accion === 'gestionar');
-        },
-        onEditOrCancel(ambiente) {
-            this.editId = ambiente ? ambiente.codigo : '';
-        },
-        limpiaCampos() {
-            this.codigo = '';
-            this.nombreAmbiente = '';
-            this.capacidad = '';
-            this.estudiantes = '';
-            this.ubicacion = '';
-            this.tipo = [];
-            this.ambientes = [];
-        },
-        cargarTabla() {
-            fetch('http://localhost:3000/cargarTablaAmbiente')
-                .then(response => response.json())
-                .then(data => {
-                    this.ambientes = data;
-                    this.tablaVacia = true;
-                })
-                .catch(error => {
-                    console.error('Error al cargar Ambientes:', error);
-                });
-        },
-        async cargarAmbiente(parametro) {
-            try {
-                if (parametro == "") {
-                    console.warn("parametro vacio");
-                    this.cargarTabla();
-                } else {
-                    const response = await fetch(`http://localhost:3000/cargarAmbiente/${parametro}`);
-                    const data = await response.json();
-
-                    if (data.length > 0) {
-                        this.ambientes = data;
-                        this.tablaVacia = true;
-
-                    } else {
-                        this.tablaVacia = false;
-                        console.warn(`No se encontró ningún docente con:  ${parametro}`);
-                    }
-                }
-
-            } catch (error) {
-                console.error('Error al cargar Docentes:', error);
-            }
-        },
-        agregarAmbiente() {
-            const nuevoAmbiente = {
-                codigo: this.codigo,
-                nombre: this.nombre,
-                tipo: this.tipo,
-                capacidad_estudiantes: this.capacidad,
-                ubicacion: this.ubicacion,
-            };
-            fetch('http://localhost:3000/crearAmbiente', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(nuevoAmbiente)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // Si la solicitud es exitosa, actualiza la lista de usuarios
-                    this.ambientes.push(data);
-
-                    // Limpia los campos de entrada
-                    this.codigo = '';
-                    this.nombre = '';
-                    this.capacidad = '';
-                    this.tipo = '';
-                    this.ubicacion = '';
-                })
-                .catch(error => {
-                    console.error('Error al agregar ambiente academico:', error);
-                });
-        },
-        actualizarAmbiente(ambiente) {
-            fetch(`http://localhost:3000/actualizarAmbiente/${ambiente.codigo}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(ambiente)
-            })
-                .then(response => response.json())
-                .then(() => {
-                    this.onEditOrCancel();
-                    this.cargarAmbiente(ambiente.nombre);
-                })
-                .catch(error => {
-                    console.error('Error al actualizar periodo academico:', error);
-                });
-        },
-        eliminarAmbiente(id) {
-            fetch(`http://localhost:3000/borrarAmbiente/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => response.json())
-                .then(() => {
-                    const index = this.ambientes.findIndex(ambiente => ambiente.codigo === id);
-                    if (index !== -1) {
-                        this.ambientes.splice(index, 1);
-                    }
-                    alert("Periodo eliminado con exito");
-                })
-                .catch(error => {
-                    console.error('Error al eliminar periodo:', error);
-                });
-        },
-        validarEliminar(id) {
-            if (confirm("¿Está seguro que desea eliminar el periodo académico?")) {
-                this.eliminarAmbiente(id);
-            }
-        }
     }
 };
 
@@ -225,7 +101,7 @@ export default {
     </div>
 
     <!-- Editar ambientes -->
-    <div class="editarPeriodos" v-show="showGestionarAmbiente">
+    <div v-show="showGestionarAmbiente">
         <h3>Ambientes</h3>
         <div class="card">
             <div class="card-header">
@@ -260,7 +136,7 @@ export default {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody v-show="tablaVacia">
+                        <tbody v-show="!tablaVacia">
                             <tr v-for="ambiente in ambientes" :key="ambiente.codigo">
                                 <template v-if="editId == ambiente.codigo">
                                     <td>{{ ambiente.codigo }}</td>
@@ -272,8 +148,6 @@ export default {
                                             class="form-control"></td>
                                     <td><input type="text" v-model="ambiente.ubicacion" class="form-control" required>
                                     </td>
-
-
                                     <td>
                                         <a href="#" class="icon">
                                             <i v-on:click="actualizarAmbiente(ambiente)" class="bi bi-check"></i>

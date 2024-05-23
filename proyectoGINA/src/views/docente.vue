@@ -178,7 +178,7 @@
 <script>
 import HeaderComponent from '../views/header.vue';
 import componenteConsulta from '../views/componenteConsultaDoc.vue';
-import controller from '../Controllers/DocenteController';
+import controller from '../Controllers/controllerDocente';
 
 export default {
   mixins: [controller],
