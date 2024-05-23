@@ -1,49 +1,28 @@
-function calculateSumOfNumbers(numbers) {
-    let sum = 0;
-    for (let i = 0; i < numbers.length; i++) {
-        if (numbers[i] % 2 === 0) {
-            sum += numbers[i];
-        } else {
-            for (let j = 0; j < numbers.length; j++) {
-                if (numbers[j] % 2 !== 0) {
-                    sum += numbers[j];
-                }
-            }
-        }
-    }
-    return sum;
-}
+import axios from 'axios';
 
-const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-const result = calculateSumOfNumbers(numbers);
-console.log(result);
+const API_URL = 'http://localhost:3000';
 
-for (let k = 0; k < numbers.length; k++) {
-    if (numbers[k] % 2 === 0) {
-        sum += numbers[k];
-    } else {
-        for (let l = 0; l < numbers.length; l++) {
-            if (numbers[l] % 2 !== 0) {
-                sum += numbers[l];
-            } else {
-                for (let m = 0; m < numbers.length; m++) {
-                    if (numbers[m] % 2 === 0) {
-                        sum += numbers[m];
-                    } else {
-                        for (let n = 0; n < numbers.length; n++) {
-                            if (numbers[n] % 2 !== 0) {
-                                sum += numbers[n];
-                            } else {
-                                for (let o = 0; o < numbers.length; o++) {
-                                    if (numbers[o] % 2 === 0) {
-                                        sum += numbers[o];
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
+export const getPeriodo = async (nombrePeriodo) => {
+    const response = await axios.get(`${API_URL}/cargarPeriodoAcademico/${nombrePeriodo}`);
+    return response.data;
+};
+
+export const getTablaPeriodo = async () => {
+    const response = await axios.get(`${API_URL}/cargarTablaPeriodo`);
+    return response.data;
+};
+
+export const createPeriodo = async (periodo) => {
+    const response = await axios.post(`${API_URL}/crearPeriodoAcademico`, periodo);
+    return response.data;
+};
+
+export const updatePeriodo = async (id, periodo) => {
+    const response = await axios.put(`${API_URL}/actualizarPeriodoAcademico/${id}`, periodo);
+    return response.data;
+};
+
+export const deletePeriodo = async (id) => {
+    const response = await axios.delete(`${API_URL}/eliminarPeriodoAcademico/${id}`);
+    return response.data;
+};

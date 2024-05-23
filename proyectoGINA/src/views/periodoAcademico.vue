@@ -2,9 +2,11 @@
 
 import HeaderComponent from '../views/header.vue';
 import componenteConsultaPerAca from '../views/componenteConsultaPerAca.vue';
+import controller from '../Controllers/controllerPeriodo';
 
 
 export default {
+    mixins: [controller],
     components: {
         HeaderComponent,
         componenteConsultaPerAca
@@ -18,161 +20,10 @@ export default {
             nombrePeriodo: '',
             fechaInicio: '',
             fechaFin: '',
-            tablaVacia: false,
+            tablaVacia: true,
             showCrearPeriodo: false,
             showGestionarPeriodo: false,
         };
-    },
-    methods: {
-        onEditOrCancel(periodo) {
-            this.editId = periodo ? periodo.id_periodo : '';
-            this.actualizarFechaFin(periodo.fecha_inicio);
-        },
-        limpiaCampos(){
-            this.nombrePeriodo = '';
-            this.fechaInicio = '';
-            this.fechaFin = '';
-        },
-        actualizarFechaFin(fecha) {
-            if (!fecha) return;
-
-            const fechaInicio = new Date(fecha);
-            this.fechas = [];
-
-            // Función para obtener la fecha correcta sumando meses
-            const sumarMeses = (fecha, meses) => {
-                const nuevaFecha = new Date(fecha);
-                nuevaFecha.setMonth(nuevaFecha.getMonth() + meses);
-
-                // Verificar si la fecha resultante es válida para el mes y año
-                if (nuevaFecha.getDate() !== fecha.getDate()) {
-                    // Ajustar al último día del mes anterior
-                    nuevaFecha.setDate(0);
-                }
-
-                const dia = nuevaFecha.getDate().toString().padStart(2, '0');
-                const mes = (nuevaFecha.getMonth() + 1).toString().padStart(2, '0');
-                return `${nuevaFecha.getFullYear()}-${mes}-${dia}`;
-            };
-            
-            // Fecha de fin en 3 meses
-            this.fechas.push(sumarMeses(fechaInicio, 3));
-
-            // Fecha de fin en 6 meses
-            this.fechas.push(sumarMeses(fechaInicio, 6));
-
-            // Seleccionar la primera fecha por defecto
-            this.fechaFin = this.fechas[0];
-        },
-        cambiarEstadoPeriodo(accion) {
-            this.cargarTabla();
-            this.limpiaCampos();
-            this.showCrearPeriodo = (accion === 'crear');
-            this.showGestionarPeriodo = (accion === 'gestionar');
-        },
-        cargarTabla() {
-            fetch('http://localhost:3000/cargarTablaPeriodo')
-                .then(response => response.json())
-                .then(data => {
-                    this.periodos = data;
-                    this.tablaVacia = true;
-                })
-                .catch(error => {
-                    console.error('Error al cargar Periodos:', error);
-                });
-        },
-        async consultarPeriodos(nombrePeriodo) {
-            try {
-                if (nombrePeriodo=="") {
-                    console.warn('El nombre del periodo académico es requerido');
-                    this.cargarTabla();
-                }else{
-                    const response = await fetch(`http://localhost:3000/periodoAcademico/${nombrePeriodo}`);
-                    const data = await response.json();
-
-                    if (data.length > 0) {
-                        this.periodos = data;
-                        this.tablaVacia=true;
-                    } else {
-                        this.tablaVacia=false;
-                        console.warn(`No se encontró ningún período académico con el nombre ${nombrePeriodo}`);
-                    }
-                }
-                
-            } catch (error) {
-                console.error('Error al cargar periodos:', error);
-            }
-        },
-        agregarPeriodos() {
-            const nuevoPeriodo = {
-                nombre: this.nombrePeriodo,
-                fechaInicio: this.fechaInicio,
-                fechafin: this.fechaFin,
-                estado: 'activo'
-            };
-            console.log(this.fechaInicio, this.fechaFin);
-            fetch('http://localhost:3000/periodoAcademico', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(nuevoPeriodo)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // Si la solicitud es exitosa, actualiza la lista de usuarios
-                    this.periodos.push(data);
-
-                    // Limpia los campos de entrada
-                    this.nombrePeriodo = '';
-                    this.fechaInicio = '';
-                    this.fechaFin = '';
-                })
-                .catch(error => {
-                    console.error('Error al agregar periodo academico:', error);
-                });
-        },
-        actualizarPeriodo(periodo) {
-            console.log(periodo);
-            fetch(`http://localhost:3000/periodoAcademico/${periodo.id_periodo}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(periodo)
-            })
-            .then(response => response.json())
-            .then(() => {
-                this.onEditOrCancel();
-            })
-            .catch(error => {
-                console.error('Error al actualizar periodo academico:', error);
-            });
-        },
-        eliminarPeriodo(id) {
-            fetch(`http://localhost:3000/periodoAcademico/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => response.json())
-                .then(() => {
-                    const index = this.periodos.findIndex(periodo => periodo.id_periodo === id);
-                    if (index !== -1) {
-                        this.periodos.splice(index, 1);
-                    }
-                    alert("Periodo eliminado con exito");
-                })
-                .catch(error => {
-                    console.error('Error al eliminar periodo:', error);
-                });
-        },
-        validarEliminar(id){
-            if(confirm("¿Está seguro que desea eliminar el periodo académico?")){
-                this.eliminarPeriodo(id);
-            }
-        }
     }
 };
 
@@ -265,7 +116,7 @@ export default {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody v-show="tablaVacia">
+                        <tbody v-show="!tablaVacia">
                             <tr v-for="periodo in periodos" :key="periodo.id_periodo">
                                 <template v-if = "editId == periodo.id_periodo">
                                     <td>{{ periodo.id_periodo }}</td>

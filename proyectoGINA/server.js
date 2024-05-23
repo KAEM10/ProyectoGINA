@@ -86,7 +86,7 @@ app.get('/cargarTablaPeriodo', (req, res) => {
 
 
 //rutas para obtener, crear, actualizar y eliminar usuarios
-app.get('/periodoAcademico/:nombre', (req, res) => {
+app.get('/cargarPeriodoAcademico/:nombre', (req, res) => {
     const nombre = req.params.nombre;
     const query = `SELECT id_periodo, nombre, DATE_FORMAT(fecha_inicio, '%Y-%m-%d') AS fecha_inicio, DATE_FORMAT(fecha_final, '%Y-%m-%d') AS fecha_final, estado FROM periodoAcademico WHERE nombre LIKE ?`;
     connection.query(query, [`${nombre}%`], (error, results) => {
@@ -99,7 +99,7 @@ app.get('/periodoAcademico/:nombre', (req, res) => {
 });
 
 
-app.post('/periodoAcademico', (req, res) => {
+app.post('/crearPeriodoAcademico', (req, res) => {
     const { nombre, fechaInicio, fechafin, estado } = req.body;
     connection.query('INSERT INTO periodoacademico (nombre, fecha_inicio, fecha_final, estado) VALUES (?, ?, ?, ?)', [nombre, fechaInicio, fechafin, estado], (error, results) => {
         if (error) throw error;
@@ -107,7 +107,7 @@ app.post('/periodoAcademico', (req, res) => {
     });
 });
 
-app.put('/periodoAcademico/:id', (req, res) => {
+app.put('/actualizarPeriodoAcademico/:id', (req, res) => {
     const id = req.params.id;
     const { nombre, fecha_inicio, fecha_final, estado } = req.body;
     connection.query('UPDATE periodoacademico SET nombre = ?, fecha_inicio = ?, fecha_final = ?, estado = ? WHERE id_periodo = ?', [nombre, fecha_inicio, fecha_final, estado, id], (error, results) => {
@@ -116,7 +116,7 @@ app.put('/periodoAcademico/:id', (req, res) => {
     });
 });
 
-app.delete('/periodoAcademico/:id', (req, res) => {
+app.delete('/eliminarPeriodoAcademico/:id', (req, res) => {
     const id = req.params.id;
     connection.query('DELETE FROM periodoacademico WHERE id_periodo = ?', [id], (error, results) => {
         if (error) throw error;
