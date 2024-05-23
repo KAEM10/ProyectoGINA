@@ -59,7 +59,7 @@ CREATE TABLE docente (
     nombres VARCHAR(255) NOT NULL,
     apellidos VARCHAR(255) NOT NULL,
     tipo_identificacion VARCHAR(50) NOT NULL CHECK (tipo_identificacion IN ('CC', 'CE', 'PASAPORTE')),
-    identificacion VARCHAR(50) NOT NULL,
+    identificacion VARCHAR(50) NOT NULL UNIQUE,
     tipo_docente VARCHAR(50) NOT NULL CHECK (tipo_docente IN ('Tecnico', 'Profesional')),
     tipo_contrato VARCHAR(50) NOT NULL CHECK (tipo_contrato IN ('PT', 'CNT')),
     area_perteneciente VARCHAR(255) NOT NULL,
