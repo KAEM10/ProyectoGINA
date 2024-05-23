@@ -65,7 +65,17 @@ app.post('/consultaSesion', (req, res) => {
 });
 
 app.get('/cargarTablaPeriodo', (req, res) => {
-    connection.query('SELECT * FROM periodoacademico', (error, results) => {
+    const query = `
+        SELECT 
+            id_periodo, 
+            nombre, 
+            DATE_FORMAT(fecha_inicio, '%Y-%m-%d') AS fecha_inicio, 
+            DATE_FORMAT(fecha_final, '%Y-%m-%d') AS fecha_final, 
+            estado 
+        FROM periodoAcademico
+    `;
+    
+    connection.query(query, (error, results) => {
         if (error) {
             res.status(500).json({ error: 'Error al obtener periodo' });
         } else {
@@ -74,10 +84,11 @@ app.get('/cargarTablaPeriodo', (req, res) => {
     });
 });
 
+
 //rutas para obtener, crear, actualizar y eliminar usuarios
 app.get('/periodoAcademico/:nombre', (req, res) => {
     const nombre = req.params.nombre;
-    const query = 'SELECT * FROM periodoacademico WHERE nombre LIKE ?';
+    const query = `SELECT id_periodo, nombre, DATE_FORMAT(fecha_inicio, '%Y-%m-%d') AS fecha_inicio, DATE_FORMAT(fecha_final, '%Y-%m-%d') AS fecha_final, estado FROM periodoAcademico WHERE nombre LIKE ?`;
     connection.query(query, [`${nombre}%`], (error, results) => {
         if (error) {
             res.status(500).json({ error: 'Error al obtener periodoacademico' });

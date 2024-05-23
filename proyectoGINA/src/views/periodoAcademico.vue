@@ -2,6 +2,7 @@
 
 import HeaderComponent from '../views/header.vue';
 import componenteConsultaPerAca from '../views/componenteConsultaPerAca.vue';
+import { format } from 'date-fns';
 
 export default {
     components: {
@@ -25,6 +26,7 @@ export default {
     methods: {
         onEditOrCancel(periodo) {
             this.editId = periodo ? periodo.id_periodo : '';
+            this.actualizarFechaFin(periodo.fecha_inicio);
         },
         limpiaCampos(){
             this.nombrePeriodo = '';
@@ -68,22 +70,11 @@ export default {
             this.showCrearPeriodo = (accion === 'crear');
             this.showGestionarPeriodo = (accion === 'gestionar');
         },
-        formatearFecha(fechaString) {
-            const fecha = new Date(fechaString);
-            const dia = fecha.getDate().toString().padStart(2, '0');
-            const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Los meses van de 0 a 11, por eso sumamos 1
-            const anio = fecha.getFullYear();
-            return `${dia}/${mes}/${anio}`;
-        },
         cargarTabla() {
             fetch('http://localhost:3000/cargarTablaPeriodo')
                 .then(response => response.json())
                 .then(data => {
                     this.periodos = data;
-                    this.periodos.forEach(periodo => {
-                        periodo.fecha_inicio = this.formatearFecha(periodo.fecha_inicio);
-                        periodo.fecha_final = this.formatearFecha(periodo.fecha_final);
-                    });
                     this.tablaVacia = true;
                 })
                 .catch(error => {
@@ -101,10 +92,6 @@ export default {
 
                     if (data.length > 0) {
                         this.periodos = data;
-                        this.periodos.forEach(periodo => {
-                            periodo.fecha_inicio = this.formatearFecha(periodo.fecha_inicio);
-                            periodo.fecha_final = this.formatearFecha(periodo.fecha_final);
-                        });
                         this.tablaVacia=true;
                     } else {
                         this.tablaVacia=false;
@@ -123,6 +110,7 @@ export default {
                 fechafin: this.fechaFin,
                 estado: 'activo'
             };
+            console.log(this.fechaInicio, this.fechaFin);
             fetch('http://localhost:3000/periodoAcademico', {
                 method: 'POST',
                 headers: {
@@ -239,7 +227,7 @@ export default {
         </div>
     </div>
 
-    <!-- Editar Periodos -->
+    <!-- Gestionar Periodos -->
     <div class="editarPeriodos" v-show="showGestionarPeriodo">
         <h3>Periodos Academicos</h3>
         <div class="card">
@@ -279,10 +267,10 @@ export default {
                         </thead>
                         <tbody v-show="tablaVacia">
                             <tr v-for="periodo in periodos" :key="periodo.id_periodo">
-                                <template v-if = "editId == periodo.id_periodo"> 
+                                <template v-if = "editId == periodo.id_periodo">
                                     <td>{{ periodo.id_periodo }}</td>
                                     <td><input type="text" v-model="periodo.nombre" class="form-control" required></td>
-                                    <td><input type="date" v-model="periodo.fecha_inicio" class="form-control" @change="actualizarFechaFin(periodo.fecha_inicio)" required></td>
+                                    <td><input type="date" v-model="periodo.fecha_inicio" class="form-control" required></td>
                                     <td>
                                         <select class="form-control" v-model="periodo.fecha_final" required>
                                             <option v-for="fecha in fechas" :key="fecha">{{ fecha }}</option>
@@ -290,7 +278,7 @@ export default {
                                     </td>
                                     <td>
                                         <select class="form-control" v-model="periodo.estado" required>
-                                            <option v-for="estado in estados">{{ estado }}</option>
+                                            <option v-for="estado in estados" :key="estado">{{ estado }}</option>
                                         </select>
                                     </td>
                                     <td>
