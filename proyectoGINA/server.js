@@ -40,10 +40,45 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Maneja la solicitud POST desde el cliente
+app.post('/consultaSesion', (req, res) => {
+    const usuario = req.body.usuario;
+    const contrasena = req.body.contrasena;
+    // Realiza la consulta a la base de datos
+    const consulta = `SELECT * FROM usuario WHERE usuario_login = '${usuario}' AND usuario_pwd = '${contrasena}'`;
+    connection.query(consulta, [usuario, contrasena], (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({ success: false, message: 'Error al realizar la consulta' });
+        } else {
+            if (results.length > 0) {
+                // Usuario y contraseña válidos
+                // Genera un token de acceso
+                const token = jwt.sign({ usuario: usuario }, 'secreto');
+                res.status(200).json({ success: true, message: 'Inicio de sesión exitoso', token: token, usuario: results[0]});
+            } else {
+                // Usuario o contraseña inválidos
+                res.status(401).json({ success: false, message: 'Usuario o contraseña incorrectos' });
+            }
+        }
+    });
+});
+
+app.get('/cargarTablaPeriodo', (req, res) => {
+    connection.query('SELECT * FROM periodoacademico', (error, results) => {
+        if (error) {
+            res.status(500).json({ error: 'Error al obtener periodo' });
+        } else {
+            res.json(results);
+        }
+    });
+});
+
 //rutas para obtener, crear, actualizar y eliminar usuarios
 app.get('/periodoAcademico/:nombre', (req, res) => {
     const nombre = req.params.nombre;
-    connection.query('SELECT * FROM periodoacademico WHERE nombre = ?', [nombre], (error, results) => {
+    const query = 'SELECT * FROM periodoacademico WHERE nombre LIKE ?';
+    connection.query(query, [`${nombre}%`], (error, results) => {
         if (error) {
             res.status(500).json({ error: 'Error al obtener periodoacademico' });
         } else {
@@ -103,7 +138,7 @@ app.post('/crearDocente', (req, res) => {
 
 app.post('/crearUsuario', (req, res) => {
     const {usuario,contra } = req.body;
-    connection.query('INSERT INTO usuario (usuario_login,usuario_pwd) VALUES (?, ?)', [usuario,contra], (error, results) => {
+    connection.query('INSERT INTO usuario (usuario_login,usuario_pwd,rol) VALUES (?, ?, ?)', [usuario,contra,'docente'], (error, results) => {
         if (error) throw error;
         res.json({ message: 'Usuario creado', id: results.insertId });
     });
@@ -150,6 +185,16 @@ app.delete('/borrarDocente/:id', (req, res) => {
     });
 });
 
+
+app.get('/cargarTablaAmbiente', (req, res) => {
+    connection.query('SELECT * FROM ambienteaprendizaje', (error, results) => {
+        if (error) {
+            res.status(500).json({ error: 'Error al obtener ambientes' });
+        } else {
+            res.json(results);
+        }
+    });
+});
 
 
 app.post('/crearAmbiente', (req, res) => {

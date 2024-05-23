@@ -2,7 +2,7 @@
 <template>
     <header class="header navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <router-link to="/home" class="navbar-brand">
+            <router-link to="/" class="navbar-brand">
                 <i class="bi bi-shop"></i> Proyecto GINA
             </router-link>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
@@ -17,9 +17,7 @@
                         </router-link>
                         <div v-show="showPeriodoOptions" class="desplegable">
                             <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'crear')">Crear Periodo</a>
-                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'editar')">Editar Periodo</a>
-                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'eliminar')">Eliminar Periodo</a>
-                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'consultar')">Consultar Periodo</a>
+                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'gestionar')">Gestionar Periodo</a>
                         </div>
                     </li>
                     <li class="nav-item dropdown" @click="showOptionsDoc">
@@ -37,9 +35,7 @@
                         </router-link>
                         <div v-show="showAmbienteOptions" class="desplegable">
                             <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'crear')">Crear Ambiente</a>
-                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'editar')">Editar Ambiente</a>
-                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'eliminar')">Eliminar Ambiente</a>
-                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'consultar')">Consultar Ambiente</a>
+                            <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'gestionar')">Gestionar Ambiente</a>
                         </div>
                     </li>
                     <li class="nav-item">

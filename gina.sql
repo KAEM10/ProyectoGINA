@@ -3,9 +3,9 @@ DROP TABLE IF EXISTS programaCompetencia;
 DROP TABLE IF EXISTS competencia;
 DROP TABLE IF EXISTS programa;
 DROP TABLE IF EXISTS ambienteAprendizaje;
-DROP TABLE IF EXISTS usuario;
 DROP TABLE IF EXISTS docente;
 DROP TABLE IF EXISTS periodoAcademico;
+DROP TABLE IF EXISTS usuario;
 
 
 CREATE TABLE periodoAcademico (
@@ -19,7 +19,8 @@ CREATE TABLE periodoAcademico (
 CREATE TABLE usuario(
     id_usuario INT PRIMARY KEY AUTO_INCREMENT,
     usuario_login VARCHAR(100) not null,
-    usuario_pwd VARCHAR(50) not null
+    usuario_pwd VARCHAR(50) not null,
+    rol VARCHAR(50) NOT NULL CHECK (rol IN ('docente', 'coordinador'))
 );
 
 CREATE TABLE ambienteAprendizaje (

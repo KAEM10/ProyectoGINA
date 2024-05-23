@@ -19,9 +19,7 @@ export default {
             fechaFin: '',
             tablaVacia: false,
             showCrearPeriodo: false,
-            showEditarPeriodo: false,
-            showEliminarPeriodo: false,
-            showConsultarPeriodo: false,
+            showGestionarPeriodo: false,
         };
     },
     methods: {
@@ -32,7 +30,6 @@ export default {
             this.nombrePeriodo = '';
             this.fechaInicio = '';
             this.fechaFin = '';
-            this.periodos = [];
         },
         actualizarFechaFin(fecha) {
             if (!fecha) return;
@@ -66,11 +63,10 @@ export default {
             this.fechaFin = this.fechas[0];
         },
         cambiarEstadoPeriodo(accion) {
+            this.cargarTabla();
             this.limpiaCampos();
             this.showCrearPeriodo = (accion === 'crear');
-            this.showEditarPeriodo = (accion === 'editar');
-            this.showEliminarPeriodo = (accion === 'eliminar');
-            this.showConsultarPeriodo = (accion === 'consultar');
+            this.showGestionarPeriodo = (accion === 'gestionar');
         },
         formatearFecha(fechaString) {
             const fecha = new Date(fechaString);
@@ -79,24 +75,37 @@ export default {
             const anio = fecha.getFullYear();
             return `${dia}/${mes}/${anio}`;
         },
+        cargarTabla() {
+            fetch('http://localhost:3000/cargarTablaPeriodo')
+                .then(response => response.json())
+                .then(data => {
+                    this.periodos = data;
+                    this.periodos.forEach(periodo => {
+                        periodo.fecha_inicio = this.formatearFecha(periodo.fecha_inicio);
+                        periodo.fecha_final = this.formatearFecha(periodo.fecha_final);
+                    });
+                    this.tablaVacia = true;
+                })
+                .catch(error => {
+                    console.error('Error al cargar Periodos:', error);
+                });
+        },
         async consultarPeriodos(nombrePeriodo) {
             try {
                 if (nombrePeriodo=="") {
                     console.warn('El nombre del periodo académico es requerido');
-                    this.tablaVacia= false;
-                    return;
+                    this.cargarTabla();
                 }else{
                     const response = await fetch(`http://localhost:3000/periodoAcademico/${nombrePeriodo}`);
                     const data = await response.json();
 
                     if (data.length > 0) {
-                        // Formatear fechas de inicio y fin
-                        data[0].fecha_inicio = this.formatearFecha(data[0].fecha_inicio);
-                        data[0].fecha_final = this.formatearFecha(data[0].fecha_final);
-
                         this.periodos = data;
+                        this.periodos.forEach(periodo => {
+                            periodo.fecha_inicio = this.formatearFecha(periodo.fecha_inicio);
+                            periodo.fecha_final = this.formatearFecha(periodo.fecha_final);
+                        });
                         this.tablaVacia=true;
-                        //this.nombrePeriodo = '';
                     } else {
                         this.tablaVacia=false;
                         console.warn(`No se encontró ningún período académico con el nombre ${nombrePeriodo}`);
@@ -136,6 +145,7 @@ export default {
                 });
         },
         actualizarPeriodo(periodo) {
+            console.log(periodo);
             fetch(`http://localhost:3000/periodoAcademico/${periodo.id_periodo}`, {
                 method: 'PUT',
                 headers: {
@@ -143,14 +153,13 @@ export default {
                 },
                 body: JSON.stringify(periodo)
             })
-                .then(response => response.json())
-                .then(() => {
-                    this.onEditOrCancel();
-                    this.consultarPeriodos(periodo.nombre);
-                })
-                .catch(error => {
-                    console.error('Error al actualizar periodo academico:', error);
-                });
+            .then(response => response.json())
+            .then(() => {
+                this.onEditOrCancel();
+            })
+            .catch(error => {
+                console.error('Error al actualizar periodo academico:', error);
+            });
         },
         eliminarPeriodo(id) {
             fetch(`http://localhost:3000/periodoAcademico/${id}`, {
@@ -231,11 +240,11 @@ export default {
     </div>
 
     <!-- Editar Periodos -->
-    <div class="editarPeriodos" v-show="showEditarPeriodo">
+    <div class="editarPeriodos" v-show="showGestionarPeriodo">
         <h3>Periodos Academicos</h3>
         <div class="card">
             <div class="card-header">
-                Editar Periodo Academico
+                Gestionar Periodo Academico
             </div>
             <componenteConsultaPerAca 
             @consultarPeriodos="consultarPeriodos" 
@@ -301,121 +310,13 @@ export default {
                                     <td>{{ periodo.estado }}</td>
                                     <td>
                                         <a href="#" class="icon">
-                                            <i v-on:click="onEditOrCancel(periodo)" >Editar</i>
+                                            <i v-on:click="onEditOrCancel(periodo)">Editar</i>
+                                        </a>
+                                        <a href="#" class="icon">
+                                            <i v-on:click="validarEliminar(periodo.id_periodo)">Eliminar</i>
                                         </a>
                                     </td>
                                 </template>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Eliminar Periodos -->
-    <div class="eliminarPeriodos" v-show="showEliminarPeriodo">
-        <h3>Periodos Academicos</h3>
-        <div class="card">
-            <div class="card-header">
-                Eliminar Periodo Academico
-            </div>
-            <componenteConsultaPerAca 
-            @consultarPeriodos="consultarPeriodos"
-            />
-        </div>
-        
-        <div class="card mt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">
-                                    ID
-                                </th>
-                                <th>
-                                    Nombre
-                                </th>
-                                <th>
-                                    Fecha de Inicio
-                                </th>
-                                <th>
-                                    Fecha de Fin
-                                </th>
-                                <th>
-                                    Estado
-                                </th>
-                                <th>
-                                    Acciones
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody v-show="tablaVacia">
-                            <tr v-for="periodo in periodos" :key="periodo.id_periodo">
-                                <td>{{ periodo.id_periodo }}</td>
-                                <td>{{ periodo.nombre }}</td>
-                                <td>{{ periodo.fecha_inicio}}</td>
-                                <td>{{ periodo.fecha_final }}</td>
-                                <td>{{ periodo.estado }}</td>
-                                <td>
-                                    <a href="#" class="icon">
-                                        <i v-on:click="validarEliminar(periodo.id_periodo)" >Eliminar</i>
-                                    </a>
-                                </td>
-                                <div>
-
-                                </div>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Consultar Periodos -->
-    <div class="consultarPeriodos" v-show="showConsultarPeriodo">
-        <h3>Periodos Academicos</h3>
-        <div class="card">
-            <div class="card-header">
-                Consultar Periodo Academico
-            </div>
-            <componenteConsultaPerAca 
-            @consultarPeriodos="consultarPeriodos"
-            />
-        </div>
-        
-        <div class="card mt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">
-                                    ID
-                                </th>
-                                <th>
-                                    Nombre
-                                </th>
-                                <th>
-                                    Fecha de Inicio
-                                </th>
-                                <th>
-                                    Fecha de Fin
-                                </th>
-                                <th>
-                                    Estado
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody v-show="tablaVacia">
-                            <tr v-for="periodo in periodos">
-                                <td>{{ periodo.id_periodo }}</td>
-                                <td>{{ periodo.nombre }}</td>
-                                <td>{{ periodo.fecha_inicio}}</td>
-                                <td>{{ periodo.fecha_final }}</td>
-                                <td>{{ periodo.estado }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -435,5 +336,8 @@ export default {
 }
 .desplegable a{
     border: 1px solid #ccc;
+}
+i {
+    margin: 5px;
 }
 </style>

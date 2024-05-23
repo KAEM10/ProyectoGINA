@@ -25,19 +25,15 @@ export default {
             fechaFin: '',
             tablaVacia: false,
             showCrearAmbiente: false,
-            showEditarAmbiente: false,
-            showEliminarAmbiente: false,
-            showConsultarAmbiente: false,
-
+            showGestionarAmbiente: false,
         };
     },
     methods: {
         cambiarEstadoAmbiente(accion) {
+            this.cargarTabla();
             this.limpiaCampos();
             this.showCrearAmbiente = (accion === 'crear');
-            this.showEditarAmbiente = (accion === 'editar');
-            this.showEliminarAmbiente = (accion === 'eliminar');
-            this.showConsultarAmbiente = (accion === 'consultar');
+            this.showGestionarAmbiente = (accion === 'gestionar');
         },
         onEditOrCancel(ambiente) {
             this.editId = ambiente ? ambiente.codigo : '';
@@ -51,11 +47,22 @@ export default {
             this.tipo = [];
             this.ambientes = [];
         },
+        cargarTabla() {
+            fetch('http://localhost:3000/cargarTablaAmbiente')
+                .then(response => response.json())
+                .then(data => {
+                    this.ambientes = data;
+                    this.tablaVacia = true;
+                })
+                .catch(error => {
+                    console.error('Error al cargar Ambientes:', error);
+                });
+        },
         async cargarAmbiente(parametro) {
             try {
                 if (parametro == "") {
-                    console.warn("parametro vacio")
-                    this.tablaVacia = false;
+                    console.warn("parametro vacio");
+                    this.cargarTabla();
                 } else {
                     const response = await fetch(`http://localhost:3000/cargarAmbiente/${parametro}`);
                     const data = await response.json();
@@ -74,7 +81,6 @@ export default {
                 console.error('Error al cargar Docentes:', error);
             }
         },
-
         agregarAmbiente() {
             const nuevoAmbiente = {
                 codigo: this.codigo,
@@ -158,7 +164,7 @@ export default {
         <HeaderComponent @cambiarEstado="cambiarEstadoAmbiente" />
     </div>
 
-    <!-- Crear Periodos -->
+    <!-- Crear ambientes -->
     <div class="crearAmbiente" v-show="showCrearAmbiente">
         <h3>Ambientes</h3>
         <div class="card">
@@ -218,12 +224,12 @@ export default {
         </div>
     </div>
 
-    <!-- Editar Periodos -->
-    <div class="editarPeriodos" v-show="showEditarAmbiente">
+    <!-- Editar ambientes -->
+    <div class="editarPeriodos" v-show="showGestionarAmbiente">
         <h3>Ambientes</h3>
         <div class="card">
             <div class="card-header">
-                Editar Ambiente
+                Gestionar Ambiente
             </div>
             <componenteConsultaAmb @cargarAmbiente="cargarAmbiente" />
         </div>
@@ -287,129 +293,13 @@ export default {
                                         <a href="#" class="icon">
                                             <i v-on:click="onEditOrCancel(ambiente)">Editar</i>
                                         </a>
+                                        <a href="#" class="icon">
+                                            <i v-on:click="eliminarAmbiente(ambiente.codigo)">Eliminar</i>
+                                        </a>
                                     </td>
                                 </template>
                             </tr>
                         </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Eliminar Periodos -->
-    <div class="eliminarAmbiente" v-show="showEliminarAmbiente">
-        <h3>Ambientes</h3>
-        <div class="card">
-            <div class="card-header">
-                Eliminar Ambiente Academico
-            </div>
-            <componenteConsultaAmb @cargarAmbiente="cargarAmbiente" />
-        </div>
-
-        <div class="card mt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">
-                                    ID
-                                </th>
-                                <th>
-                                    Nombre
-                                </th>
-                                <th>
-                                    Tipo
-                                </th>
-                                <th>
-                                    Capacidad
-                                </th>
-                                <th>
-                                    Ubicacion
-                                </th>
-                                <th>
-                                    Acciones
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody v-show="tablaVacia">
-
-                            <tr v-for="ambiente in ambientes" :key="ambiente.codigo">
-                                <td>{{ ambiente.codigo }}</td>
-                                <td>{{ ambiente.nombre }}</td>
-                                <td>{{ ambiente.tipo }}</td>
-                                <td>{{ ambiente.capacidad_estudiantes }}</td>
-                                <td>{{ ambiente.ubicacion }}</td>
-
-                                <a href="#" class="icon">
-                                    <i v-on:click="eliminarAmbiente(ambiente.codigo)">Eliminar</i>
-                                </a>
-
-
-                                <div>
-
-                                </div>
-                            </tr>
-                        </tbody>
-
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Consultar Periodos -->
-    <div class="consultarAmbiente" v-show="showConsultarAmbiente">
-        <h3>Ambientes</h3>
-        <div class="card">
-            <div class="card-header">
-                Consultar Ambiente Academico
-            </div>
-            <componenteConsultaAmb @cargarAmbiente="cargarAmbiente" />
-        </div>
-
-        <div class="card mt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">
-                                    ID
-                                </th>
-                                <th>
-                                    Nombre
-                                </th>
-                                <th>
-                                    Tipo
-                                </th>
-                                <th>
-                                    Capacidad
-                                </th>
-                                <th>
-                                    Ubicacion
-                                </th>
-                                <th>
-                                    Acciones
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody v-show="tablaVacia">
-
-                            <tr v-for="ambiente in ambientes" :key="ambiente.codigo">
-                                <td>{{ ambiente.codigo }}</td>
-                                <td>{{ ambiente.nombre }}</td>
-                                <td>{{ ambiente.tipo }}</td>
-                                <td>{{ ambiente.capacidad_estudiantes }}</td>
-                                <td>{{ ambiente.ubicacion }}</td>
-
-                                <div>
-
-                                </div>
-                            </tr>
-                        </tbody>
-
                     </table>
                 </div>
             </div>
@@ -429,5 +319,9 @@ export default {
 
 .desplegable a {
     border: 1px solid #ccc;
+}
+
+i {
+    margin: 5px;
 }
 </style>

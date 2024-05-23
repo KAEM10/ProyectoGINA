@@ -329,6 +329,7 @@ export default {
                                 <th>Contrato</th>
                                 <th>Area</th>
                                 <th>Estado</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody v-show="!tablaVacia">

@@ -71,7 +71,11 @@ export default {
                 .then(data => {
                     localStorage.token=data.token;
                     if(localStorage.token!="undefined"){
-                        this.$router.push('home');
+                        if(data.usuario.rol=="coordinador"){
+                            this.$router.push('periodoAcademico');
+                        }else{
+                            this.$router.push('horario');
+                        }
                     }
                 })
                 .catch(error => {

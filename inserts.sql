@@ -22,17 +22,17 @@ VALUES ('Periodo 1', '2024-09-01', '2024-11-30', 'activo'),
        ('Periodo 20', '2029-01-01', '2029-06-30', 'activo');
 
 -- Inserts para usuario
-INSERT INTO usuario (usuario_login, usuario_pwd)
-VALUES ('user1', 'password1'),
-       ('user2', 'password2'),
-       ('user3', 'password3'),
-       ('user4', 'password4'),
-       ('user5', 'password5'),
-       ('user6', 'password6'),
-       ('user7', 'password7'),
-       ('user8', 'password8'),
-       ('user9', 'password9'),
-       ('user10', 'password10');
+INSERT INTO usuario (usuario_login, usuario_pwd, rol)
+VALUES ('user1', 'password1', 'coordinador'),
+       ('user2', 'password2', 'docente'),
+       ('user3', 'password3', 'docente'),
+       ('user4', 'password4', 'docente'),
+       ('user5', 'password5', 'docente'),
+       ('user6', 'password6', 'docente'),
+       ('user7', 'password7', 'docente'),
+       ('user8', 'password8', 'docente'),
+       ('user9', 'password9', 'docente'),
+       ('user10', 'password10', 'docente');
 
 -- Inserts para ambienteAprendizaje
 INSERT INTO ambienteAprendizaje (codigo, nombre, tipo, capacidad_estudiantes, ubicacion)
