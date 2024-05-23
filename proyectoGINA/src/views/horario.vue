@@ -4,8 +4,8 @@
       <div class="container">
         <div class="form-group">
           <label for="period-select">Seleccione período académico:</label>
-          <select id="period-select" v-model="selectedPeriod">
-            <option v-for="period in periods" :key="period" :value="period">{{ period }}</option>
+          <select class="form-control w-100 ml-sm-2 mr-sm-4 my-2">
+            <option v-for="programa in programas" :key="programa.id" :value="programa.nombre">{{ programa.nombre }}</option>
           </select>
         </div>
         <div class="form-group search-container">
@@ -34,11 +34,16 @@
   <script>
   import HeaderComponent from '../views/header.vue';
   import componentHorario from '../views/componentHorario.vue';
+  import controllerPrograma from '../Controllers/controllerPrograma';
   
   export default {
+    mixins: [controllerPrograma],
     components: {
       HeaderComponent,
       componentHorario
+    },
+    mounted(){
+      this.cargarProgramas();
     },
     data() {
       return {

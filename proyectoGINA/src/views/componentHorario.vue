@@ -46,6 +46,7 @@ export default {
         this.selectedCells.splice(cellIndex, 1);
       } else {
         this.selectedCells.push({ day, hour });
+        console.log(day,hour);
       }
     }
   }
