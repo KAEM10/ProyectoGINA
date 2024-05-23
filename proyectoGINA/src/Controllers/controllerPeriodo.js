@@ -89,13 +89,8 @@ export default {
                     this.cargarTabla();
                 }else{
                     const data = await getPeriodo(nombrePeriodo);
-                    if (data.length > 0) {
-                        this.periodos = data;
-                        this.tablaVacia=true;
-                    } else {
-                        this.tablaVacia=false;
-                        console.warn(`No se encontró ningún período académico con el nombre ${nombrePeriodo}`);
-                    }
+                    this.periodos = data;
+                    this.tablaVacia= data.length === 0;
                 }
                 
             } catch (error) {

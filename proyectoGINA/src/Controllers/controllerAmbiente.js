@@ -67,15 +67,8 @@ export default {
                     this.cargarTabla();
                 } else {
                     const data = await getAmbiente(parametro);
-
-                    if (data.length > 0) {
-                        this.ambientes = data;
-                        this.tablaVacia = true;
-
-                    } else {
-                        this.tablaVacia = false;
-                        console.warn(`No se encontró ningún ambiente con:  ${parametro}`);
-                    }
+                    this.ambientes = data;
+                    this.tablaVacia = data.length === 0;
                 }
 
             } catch (error) {
