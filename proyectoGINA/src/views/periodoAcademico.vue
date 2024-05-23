@@ -2,7 +2,7 @@
 
 import HeaderComponent from '../views/header.vue';
 import componenteConsultaPerAca from '../views/componenteConsultaPerAca.vue';
-import { format } from 'date-fns';
+
 
 export default {
     components: {
