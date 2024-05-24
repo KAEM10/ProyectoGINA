@@ -9,26 +9,6 @@ export default {
     components: {
         HeaderComponent,
         componenteConsultaAmb
-    },
-    data() {
-        return {
-            ambientes: [],
-            codigo: '',
-            nombre: '',
-            capacidad: '',
-            estudiantes: '',
-            ubicacion: '',
-            fechas: [],
-            tipo: '',
-            tipos: [{ id: 1, nombre: 'Virtual' }, { id: 2, nombre: 'Presencial' }],
-            editId: '',
-            nombrePeriodo: '',
-            fechaInicio: '',
-            fechaFin: '',
-            tablaVacia: false,
-            showCrearAmbiente: false,
-            showGestionarAmbiente: false,
-        };
     }
 };
 

@@ -1,0 +1,158 @@
+[
+  {
+    "id": "001",
+    "nombre": "Ingeniería de Software",
+    "competencias": [
+      {
+        "id": "C01",
+        "tipo": "genérica",
+        "nombre": "Trabajo en equipo"
+      },
+      {
+        "id": "C02",
+        "tipo": "específica",
+        "nombre": "Programación en Java"
+      },
+      {
+        "id": "C03",
+        "tipo": "genérica",
+        "nombre": "Comunicación efectiva"
+      },
+      {
+        "id": "C04",
+        "tipo": "específica",
+        "nombre": "Diseño de sistemas"
+      }
+    ]
+  },
+  {
+    "id": "002",
+    "nombre": "Administración de Empresas",
+    "competencias": [
+      {
+        "id": "C05",
+        "tipo": "genérica",
+        "nombre": "Liderazgo"
+      },
+      {
+        "id": "C06",
+        "tipo": "específica",
+        "nombre": "Gestión financiera"
+      },
+      {
+        "id": "C07",
+        "tipo": "genérica",
+        "nombre": "Negociación"
+      },
+      {
+        "id": "C08",
+        "tipo": "específica",
+        "nombre": "Planificación estratégica"
+      }
+    ]
+  },
+  {
+    "id": "003",
+    "nombre": "Medicina",
+    "competencias": [
+      {
+        "id": "C09",
+        "tipo": "genérica",
+        "nombre": "Ética profesional"
+      },
+      {
+        "id": "C10",
+        "tipo": "específica",
+        "nombre": "Diagnóstico clínico"
+      },
+      {
+        "id": "C11",
+        "tipo": "genérica",
+        "nombre": "Trabajo bajo presión"
+      },
+      {
+        "id": "C12",
+        "tipo": "específica",
+        "nombre": "Tratamiento médico"
+      }
+    ]
+  },
+  {
+    "id": "004",
+    "nombre": "Derecho",
+    "competencias": [
+      {
+        "id": "C13",
+        "tipo": "genérica",
+        "nombre": "Pensamiento crítico"
+      },
+      {
+        "id": "C14",
+        "tipo": "específica",
+        "nombre": "Redacción jurídica"
+      },
+      {
+        "id": "C15",
+        "tipo": "genérica",
+        "nombre": "Resolución de conflictos"
+      },
+      {
+        "id": "C16",
+        "tipo": "específica",
+        "nombre": "Conocimiento de leyes"
+      }
+    ]
+  },
+  {
+    "id": "005",
+    "nombre": "Arquitectura",
+    "competencias": [
+      {
+        "id": "C17",
+        "tipo": "genérica",
+        "nombre": "Creatividad"
+      },
+      {
+        "id": "C18",
+        "tipo": "específica",
+        "nombre": "Diseño arquitectónico"
+      },
+      {
+        "id": "C19",
+        "tipo": "genérica",
+        "nombre": "Gestión de proyectos"
+      },
+      {
+        "id": "C20",
+        "tipo": "específica",
+        "nombre": "Conocimiento de materiales"
+      }
+    ]
+  },
+  {
+    "id": "006",
+    "nombre": "Psicología",
+    "competencias": [
+      {
+        "id": "C21",
+        "tipo": "genérica",
+        "nombre": "Empatía"
+      },
+      {
+        "id": "C22",
+        "tipo": "específica",
+        "nombre": "Evaluación psicológica"
+      },
+      {
+        "id": "C23",
+        "tipo": "genérica",
+        "nombre": "Comunicación verbal"
+      },
+      {
+        "id": "C24",
+        "tipo": "específica",
+        "nombre": "Intervención terapéutica"
+      }
+    ]
+  }
+]
