@@ -10,20 +10,6 @@ export default {
     components: {
         HeaderComponent,
         componenteConsultaPerAca
-    },
-    data() {
-        return {
-            periodos: [],
-            fechas: [],
-            estados: ['activo', 'inactivo'],
-            editId: '',
-            nombrePeriodo: '',
-            fechaInicio: '',
-            fechaFin: '',
-            tablaVacia: true,
-            showCrearPeriodo: false,
-            showGestionarPeriodo: false,
-        };
     }
 };
 
