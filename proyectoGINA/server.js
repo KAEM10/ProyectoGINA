@@ -64,6 +64,48 @@ app.post('/consultaSesion', (req, res) => {
     });
 });
 
+app.get('/periodos', (req, res) => {
+    const query = 'SELECT * FROM periodoacademico WHERE estado = "activo"';
+  
+    connection.query(query, (err, results) => {
+      if (err) {
+        console.error('Error ejecutando la consulta:', err);
+        res.status(500).send('Error ejecutando la consulta');
+        return;
+      }
+      res.json(results);
+    });
+  });
+
+  app.get('/ambientes', (req, res) => {
+    const query = 'SELECT * FROM ambienteaprendizaje';
+  
+    connection.query(query, (err, results) => {
+      if (err) {
+        console.error('Error ejecutando la consulta:', err);
+        res.status(500).send('Error ejecutando la consulta');
+        return;
+      }
+      res.json(results);
+    });
+  });
+
+  app.get('/horarioOcupado/:id', (req, res) => {
+    const id = req.params.id;
+    const query = 'SELECT dia, hora_inicio, hora_fin FROM horario WHERE id_ambiente = ?';
+    
+    connection.query(query, [id], (err, results) => {
+      if (err) {
+        console.error('Error ejecutando la consulta:', err);
+        res.status(500).send('Error ejecutando la consulta');
+        return;
+      }
+      console.log(results);
+      res.json(results);
+    });
+  });
+  
+  
 app.get('/cargarTablaPeriodo', (req, res) => {
     const query = `
         SELECT 

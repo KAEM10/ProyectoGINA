@@ -1,31 +1,53 @@
 <template>
-  <div class="schedule">
-    <div class="header">
-      <div class="cell"></div>
-      <div class="cell" v-for="day in days" :key="day">{{ day }}</div>
+  <div>
+    <div class="schedule">
+      <div class="header">
+        <div class="cell"></div>
+        <div class="cell" v-for="day in days" :key="day">{{ day }}</div>
+      </div>
+      <div class="row" v-for="(hour, index) in hours" :key="index">
+        <div class="cell">{{ hour }}</div>
+        <div
+          class="cell"
+          v-for="day in days" 
+          :key="day + index"
+          :class="{ selected: isSelected(day, hour), occupied: isOccupied(day, hour) }"
+          @click="toggleSelection(day, hour)"
+        ></div>
+      </div>
     </div>
-    <div class="row" v-for="(hour, index) in hours" :key="index">
-      <div class="cell">{{ hour }}</div>
-      <div
-        class="cell"
-        v-for="day in days" 
-        :key="day + index"
-        :class="{ selected: isSelected(day, hour) }"
-        @click="toggleSelection(day, hour)"
-      ></div>
-    </div>
+    <div><p>{{ idAmbiente }}</p></div>
   </div>
 </template>
 
-
 <script>
+import controller from '../Controllers/controllerHorario.js'; // Importar el mixin
+
 export default {
+  mixins: [controller],
+  props: {
+    idAmbiente: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
       days: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
       hours: this.generateHours(7, 22),
-      selectedCells: []
+      selectedCells: [],
+      horariosOcupados: []
     };
+  },
+  watch: {
+    idAmbiente: {
+      handler(newVal) {
+        if (newVal) {
+          this.obtenerHorariosOcupados(newVal);
+        }
+      },
+      immediate: true
+    }
   },
   methods: {
     generateHours(start, end) {
@@ -40,12 +62,29 @@ export default {
     isSelected(day, hour) {
       return this.selectedCells.some(cell => cell.day === day && cell.hour === hour);
     },
+    isOccupied(day, hour) {
+      return this.horariosOcupados.some(horario =>
+        horario.dia === day && this.isBetween(hour, horario.hora_inicio, horario.hora_fin)
+      );
+    },
+    isBetween(hour, startHour, endHour) {
+      const hourToNumber = (h) => {
+        const [time, period] = h.split(' ');
+        let [hours, minutes] = time.split(':').map(Number);
+        if (period === 'PM' && hours !== 12) hours += 12;
+        if (period === 'AM' && hours === 12) hours = 0;
+        return hours * 60 + (minutes || 0);
+      };
+      return hourToNumber(hour) >= hourToNumber(startHour) && hourToNumber(hour) < hourToNumber(endHour);
+    },
     toggleSelection(day, hour) {
-      const cellIndex = this.selectedCells.findIndex(cell => cell.day === day && cell.hour === hour);
-      if (cellIndex >= 0) {
-        this.selectedCells.splice(cellIndex, 1);
-      } else {
-        this.selectedCells.push({ day, hour });
+      if (!this.isOccupied(day, hour)) {
+        const cellIndex = this.selectedCells.findIndex(cell => cell.day === day && cell.hour === hour);
+        if (cellIndex >= 0) {
+          this.selectedCells.splice(cellIndex, 1);
+        } else {
+          this.selectedCells.push({ day, hour });
+        }
       }
     }
   }
@@ -84,5 +123,8 @@ export default {
   background-color: #007bff;
   color: white;
 }
+.cell.occupied {
+  background-color: #ff0000;
+  pointer-events: none; /* Deshabilita eventos de clic en celdas ocupadas */
+}
 </style>
-

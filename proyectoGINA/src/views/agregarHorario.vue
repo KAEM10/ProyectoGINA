@@ -1,4 +1,4 @@
-<template>
+<template class="agregarHorario">
     <div>
       <HeaderComponent />
       <div class="container">
