@@ -1,11 +1,15 @@
 <template>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> a443df7d78c5e57830b44d498393c10e2caa91ae
   <div>
     <HeaderComponent />
     <div class="container">
       <div class="form-group">
         <label for="period-select">Seleccione período académico:</label>
         <select id="period-select" v-model="selectedPeriod">
+<<<<<<< HEAD
           <option v-for="period in periodos" :key="period.nombre" :value="period.fecha_inicio">{{ period.nombre }}
           </option>
         </select>
@@ -36,7 +40,15 @@
           </div>
         </div>
 >>>>>>> 3dfea56899d0350f7d17aa0b9dab02d3dafe0830
+=======
+          <option v-for="period in periodos" :key="period.nombre" :value="period.fecha_inicio">
+            {{ period.nombre }}
+          </option>
+        </select>
+>>>>>>> a443df7d78c5e57830b44d498393c10e2caa91ae
       </div>
+      
+     
       <div>
         <input type="text" v-model="inputValue" @input="filterOptions" @click="toggleDropdown"
           placeholder="Escribe o selecciona..." />
@@ -47,7 +59,17 @@
           </option>
         </select>
       </div>
+      <div>
+        <p>{{ selectedAmb }}</p>
+      </div>
+      <div v-if="selectedPeriod && selectedAmb">
+        <componentHorario :idAmbiente="selectedAmb" :key="selectedPeriod + selectedAmb" />
+      </div>
+      <div>
+        <button @click="cargarAgregarHorario">Seleccionar</button>
+      </div>
     </div>
+<<<<<<< HEAD
 <<<<<<< HEAD
     <div>
       <p>{{ selectedAmb }}</p>
@@ -61,6 +83,8 @@
 </div>
 
 
+=======
+>>>>>>> a443df7d78c5e57830b44d498393c10e2caa91ae
   </div>
 </template>
 
@@ -68,9 +92,10 @@
 import HeaderComponent from '../views/header.vue';
 import componentHorario from '../views/componentHorario.vue';
 import controller from '../Controllers/controllerHorario.js';
+import controllerPrograma from '../Controllers/controllerPrograma.js';
 
 export default {
-  mixins: [controller],
+  mixins: [controller, controllerPrograma],
   components: {
     HeaderComponent,
     componentHorario,
@@ -79,10 +104,15 @@ export default {
     return {
       inputValue: '',
       selectedPeriod: null,
+      selectedProgram: null,
       selectedAmb: null,
       showDropdown: false,
       filteredOptions: [],
-      id_del_ambiente: 'ID_DEL_AMBIENTE_AQUI'
+      id_del_ambiente: 'ID_DEL_AMBIENTE_AQUI',
+      searchQuery: '',
+      periodos: [], // Asegúrate de cargar los periodos desde el controller
+      programas: [], // Asegúrate de cargar los programas desde el controller
+      ambientes: [] // Asegúrate de cargar los ambientes desde el controller
     };
   },
   methods: {
@@ -98,6 +128,7 @@ export default {
         period.codigo.toLowerCase().startsWith(searchTerm)
       );
       this.showDropdown = true; // Mostrar el dropdown cuando haya coincidencias
+<<<<<<< HEAD
 =======
   </template>
   
@@ -123,16 +154,21 @@ export default {
         ambients: ['Aula 101', 'Aula 102', 'Laboratorio 201', 'Sala de reuniones', 'Biblioteca'] // Example ambients
       };
 >>>>>>> 3dfea56899d0350f7d17aa0b9dab02d3dafe0830
+=======
+>>>>>>> a443df7d78c5e57830b44d498393c10e2caa91ae
     },
     selectOption() {
       this.inputValue = this.selectedAmb;
       this.showDropdown = false;
     },
     cargarAgregarHorario() {
-      // En tus métodos o eventos donde quieres navegar a la nueva página
       this.$router.push('/agregarHorario');
-
-    }
+    },
+  },
+  mounted() {
+    this.obtenerPeriodosActivos();
+    this.obtenerAmbientes();
+    this.cargarProgramas();
   },
   watch: {
     selectedPeriod(newVal) {
@@ -141,11 +177,6 @@ export default {
         this.showDropdown = false;
       }
     }
-
-  },
-  mounted() {
-    this.obtenerPeriodosActivos();
-    this.obtenerAmbientes();
   }
 };
 </script>

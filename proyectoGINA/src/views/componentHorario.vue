@@ -85,12 +85,15 @@ export default {
         } else {
           this.selectedCells.push({ day, hour });
         }
+<<<<<<< HEAD
       const cellIndex = this.selectedCells.findIndex(cell => cell.day === day && cell.hour === hour);
       if (cellIndex >= 0) {
         this.selectedCells.splice(cellIndex, 1);
       } else {
         this.selectedCells.push({ day, hour });
         console.log(day,hour);
+=======
+>>>>>>> a443df7d78c5e57830b44d498393c10e2caa91ae
       }
     }
   }
