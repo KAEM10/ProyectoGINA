@@ -39,5 +39,6 @@ export default {
                 console.error('Error al cargar periodos:', error);
             }
         }
+        
     }
 }

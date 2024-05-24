@@ -10,8 +10,8 @@
           </option>
         </select>
       </div>
-      
-     
+
+
       <div>
         <input type="text" v-model="inputValue" @input="filterOptions" @click="toggleDropdown"
           placeholder="Escribe o selecciona..." />
@@ -21,9 +21,6 @@
             {{ period.codigo }}
           </option>
         </select>
-      </div>
-      <div>
-        <p>{{ selectedAmb }}</p>
       </div>
       <div v-if="selectedPeriod && selectedAmb">
         <componentHorario :idAmbiente="selectedAmb" :key="selectedPeriod + selectedAmb" />
