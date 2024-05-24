@@ -78,7 +78,6 @@ export default {
       return hourToNumber(hour) >= hourToNumber(startHour) && hourToNumber(hour) < hourToNumber(endHour);
     },
     toggleSelection(day, hour) {
-<<<<<<< HEAD
       if (!this.isOccupied(day, hour)) {
         const cellIndex = this.selectedCells.findIndex(cell => cell.day === day && cell.hour === hour);
         if (cellIndex >= 0) {
@@ -86,14 +85,6 @@ export default {
         } else {
           this.selectedCells.push({ day, hour });
         }
-=======
-      const cellIndex = this.selectedCells.findIndex(cell => cell.day === day && cell.hour === hour);
-      if (cellIndex >= 0) {
-        this.selectedCells.splice(cellIndex, 1);
-      } else {
-        this.selectedCells.push({ day, hour });
-        console.log(day,hour);
->>>>>>> 3dfea56899d0350f7d17aa0b9dab02d3dafe0830
       }
     }
   }
