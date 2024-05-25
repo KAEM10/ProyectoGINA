@@ -9,9 +9,12 @@
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            <h1 style="color: azure;">{{}}</h1>
+            <h1 style="color: azure;">{{ usuario_header}}</h1>
+            
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item dropdown" @click="showOptions">
+                    <li class="nav-item dropdown" @click="showOptions" v-show="showDocente">
                         <router-link to="/periodoAcademico" class="navbar-brand">
                             <i class="bi bi-card-text"></i> Periodo Academico
                         </router-link>
@@ -60,9 +63,12 @@
 </template>
 
 <script>
+import home from '../Controllers/controllerHome.js'
+
 export default {
     name: 'header',
     components: {},
+    mixins: [home],
     emits: ['cambiarEstado'],
     
     data() {
@@ -71,7 +77,12 @@ export default {
             showDocenteOptions: false,
             showAmbienteOptions: false,
             showUserMenu: false,
+            showDocente: false,
         };
+    },
+    mounted() {
+        this.showUsuario();
+        //console.log('Usuario: ', this.usuario_header);
     },
     methods: {
         showOptions() {
@@ -85,6 +96,10 @@ export default {
         },
         toggleUserMenu() {
             this.showUserMenu = !this.showUserMenu;
+        },
+        showUsuario() {
+            console.log('Usuario: ', this.usuario_header);
+            this.showDocente = !this.showDocente;
         }
     }
 };

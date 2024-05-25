@@ -27,67 +27,9 @@
 </template>
 
 <script >
-
+import controller from '../Controllers/controllerHome.js';
 export default {
-    name: 'home',
-    components: {
-    },
-    data: function () {
-        return {
-            login: "",
-            password: "",
-            error: "",
-            error_msg: "",
-        }
-    },
-    mounted(){
-        localStorage.removeItem('token');
-    },
-    methods: {
-        verificar_credenciales() {
-            // Construye los datos del formulario como un objeto JSON
-            const data = {
-                usuario: this.login,
-                contrasena: this.password
-            };
-            // Realiza la solicitud POST al servidor
-            fetch('http://localhost:3000/consultaSesion', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        this.error = true;
-                        this.error_msg = "Usuario o contraseña incorrectos";
-                    } else {
-                        this.error = false;
-                        this.error_msg = "";
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    localStorage.token=data.token;
-                    if(localStorage.token!="undefined"){
-                        if(data.usuario.rol=="coordinador"){
-                            this.$router.push('periodoAcademico');
-                        }else{
-                            this.$router.push('horario');
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        }
-    }
-
-
-
-
-
+    mixins: [controller]
 }
 </script>
 
