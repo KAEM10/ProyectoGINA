@@ -12,7 +12,10 @@ export const getAmbientes = async () => {
     const response = await axios.get(`${API_URL}/ambientes`);
     return response.data;
 };
-
+export const getDocenteContrato=async (id) => {
+    const response= await axios.get(`${API_URL}/cargarDocenteContrato/${id}`);
+    return response.data;
+}
 export const getHorario = async (id) => {
     const response = await axios.get(`${API_URL}/horarioOcupado/${id}`);
     return response.data;

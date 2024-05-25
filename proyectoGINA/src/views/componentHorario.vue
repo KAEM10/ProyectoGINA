@@ -41,6 +41,8 @@ export default {
       days: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
       hours: this.generateHours(),
       selectedCells: [],
+      horasMaximasDiarias: 0,
+      horasMaximasSemanales: 0,
       horariosOcupados: [],
       horariosOcupados2: []
     };
@@ -81,12 +83,28 @@ export default {
       return dailyHours;
     },
     isWeeklyHoursExceeded() {
-      return this.countWeeklyHours() > 40; // Verificar si las horas semanales exceden 40
+      this.obtenerDocenteContrato(this.idDocente);
+      if(this.docenteContrato==="PT"){
+        this.horasMaximasSemanales=32;
+      }
+      if(this.docenteContrato==="CNT"){
+        this.horasMaximasSemanales=40;
+      }
+      return this.countWeeklyHours() > this.horasMaximasSemanales; // Verificar si las horas semanales exceden 40
     },
     isDailyHoursExceeded() {
+      this.obtenerDocenteContrato(this.idDocente);
+      alert(this.docenteCT)
       const dailyHours = this.countDailyHours();
+      if(this.docenteContrato==="PT"){
+        this.horasMaximasDiarias=8;
+      }
+      if(this.docenteContrato==="CNT"){
+        this.horasMaximasDiarias=10;
+      }
+      alert(this.horasMaximasDiarias);
       for (const day in dailyHours) {
-        if (dailyHours[day] > 8) { // Verificar si las horas diarias exceden 8 para algún día
+        if (dailyHours[day] > this.horasMaximasDiarias) { // Verificar si las horas diarias exceden 8 para algún día
           return true;
         }
       }
@@ -182,8 +200,12 @@ export default {
         }
       }
     }
+  },
+  mounted(){
+    
   }
 };
+
 </script>
 
 <style scoped>

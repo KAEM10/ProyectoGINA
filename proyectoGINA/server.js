@@ -100,7 +100,6 @@ app.get('/periodos', (req, res) => {
         res.status(500).send('Error ejecutando la consulta');
         return;
       }
-      console.log(results);
       res.json(results);
     });
   });
@@ -114,7 +113,6 @@ app.get('/periodos', (req, res) => {
         res.status(500).send('Error ejecutando la consulta');
         return;
       }
-      console.log(results + "id"+ id);
       res.json(results);
     });
   });
@@ -221,6 +219,23 @@ app.get('/cargarDocente/:parametro', (req, res) => {
         } else {
             res.json(results);
         }
+    });
+});
+app.get('/cargarDocenteContrato/:id', (req, res) => {
+    const id = req.params.id;
+    console.log(id);
+
+    const query = "SELECT tipo_contrato FROM docente WHERE id_docente=?";
+    connection.query(query, [id], (error, results) => {
+        if (error) {
+            res.status(500).json({ error: 'Error al obtener docente' });
+        } else {
+            
+            console.log(results);
+            res.json(results);
+            
+        }
+        
     });
 });
 app.get('/cargarTablaDoc', (req, res) => {

@@ -6,7 +6,8 @@ import {
     createDocente,
     updateDocente,
     deleteDocente,
-    createUsuario
+    createUsuario,
+    
   } from '../Models/modelDocente';
   
   export default {

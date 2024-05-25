@@ -64,8 +64,8 @@
         </div>
       </div>
     </div>
-    <div v-if="selectedPeriod && selectedAmb">
-  <componentHorario :idDocente="selectedDoc" :idAmbiente="selectedAmb" :key="selectedPeriod + selectedAmb" />
+    <div v-if="selectedPeriod && selectedAmb && selectedProg && selectedDoc && selectedComp">
+  <componentHorario :idDocente="selectedDoc" :idAmbiente="selectedAmb" :key="selectedPeriod + selectedAmb+selectedProg + selectedDoc +selectedComp" />
 </div>
 
       <div>

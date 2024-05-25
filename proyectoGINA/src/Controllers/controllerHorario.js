@@ -4,11 +4,14 @@ import {
     getAmbientes,
     getHorario,
     getHorarioDoc,
+    getDocenteContrato,
 } from '../Models/modelHorario';
 
 export default {
     data() {
         return {
+            docenteContrato: '',
+            docenteCT: '',
             periodos: [],
             ambientes: [],
             horariosOcupados:[],
@@ -37,6 +40,16 @@ export default {
             try {
                 const data = await getHorario(id);
                 this.horariosOcupados = data;
+            } catch (error) {
+                console.error('Error al cargar periodos:', error);
+            }
+        },
+        async obtenerDocenteContrato(id){
+            try {
+                const data = await getDocenteContrato(id);
+                this.docenteContrato = data[0];
+                this.docenteCT=this.docenteContrato.tipo_contrato;
+                console.log("Tipo de contrato:", this.docenteCT);
             } catch (error) {
                 console.error('Error al cargar periodos:', error);
             }
