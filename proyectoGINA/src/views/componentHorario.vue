@@ -64,6 +64,33 @@ export default {
     }
   },
   methods: {
+    countWeeklyHours() {
+      const weeklyHours = this.selectedCells.length * 2; // Multiplicar por 2 ya que cada celda representa 2 horas
+      return weeklyHours;
+    },
+    countDailyHours() {
+      const dailyHours = {}; // Objeto para almacenar las horas diarias
+      this.selectedCells.forEach(cell => {
+        if (!dailyHours[cell.day]) {
+          dailyHours[cell.day] = 0; // Inicializar las horas diarias para cada día en 0
+        }
+        alert(dailyHours[cell.day])
+        dailyHours[cell.day] += 1; // Sumar 2 horas por cada celda seleccionada
+      });
+      return dailyHours;
+    },
+    isWeeklyHoursExceeded() {
+      return this.countWeeklyHours() > 40; // Verificar si las horas semanales exceden 40
+    },
+    isDailyHoursExceeded() {
+      const dailyHours = this.countDailyHours();
+      for (const day in dailyHours) {
+        if (dailyHours[day] > 8) { // Verificar si las horas diarias exceden 8 para algún día
+          return true;
+        }
+      }
+      return false;
+    },
     generateHours(start, end) {
       const hours = [];
       for (let i = start; i <= end; i++) {
@@ -102,15 +129,57 @@ export default {
       return hourToNumber(hour) >= hourToNumber(startHour) && hourToNumber(hour) < hourToNumber(endHour);
     },
     toggleSelection(day, hour) {
-      if (!this.isOccupied(day, hour)) {
-        const cellIndex = this.selectedCells.findIndex(cell => cell.day === day && cell.hour === hour);
-        if (cellIndex >= 0) {
-          this.selectedCells.splice(cellIndex, 1);
-        } else {
-          this.selectedCells.push({ day, hour });
+  // Verificar si la celda está ocupada
+  if (!this.isOccupied(day, hour)) {
+    // Verificar si ya se ha alcanzado el límite de 3 bloques de dos horas
+    if (this.selectedCells.length >= 6) {
+      return; // No permitir más selecciones si se alcanzó el límite
+    }
+
+    // Verificar si la celda ya está seleccionada
+    const cellIndex = this.selectedCells.findIndex(cell => cell.day === day && cell.hour === hour);
+    if (cellIndex >= 0) {
+      // Si la celda ya está seleccionada, deseleccionarla
+      this.selectedCells.splice(cellIndex, 1);
+
+      // También deseleccionar la celda adyacente en la siguiente hora si está seleccionada
+      const nextHourIndex = this.hours.findIndex(h => h === hour) + 1;
+      if (nextHourIndex < this.hours.length) {
+        const nextHour = this.hours[nextHourIndex];
+        const nextHourCellIndex = this.selectedCells.findIndex(cell => cell.day === day && cell.hour === nextHour);
+        if (nextHourCellIndex >= 0) {
+          this.selectedCells.splice(nextHourCellIndex, 1);
+        }
+      }
+    } else {
+      // Si no está seleccionada, agregarla a las selecciones
+      this.selectedCells.push({ day, hour });
+
+      // Verificar si hay una celda adyacente en la siguiente hora y seleccionarla automáticamente
+      const nextHourIndex = this.hours.findIndex(h => h === hour) + 1;
+      if (nextHourIndex < this.hours.length) {
+        const nextHour = this.hours[nextHourIndex];
+        if (!this.isOccupied(day, nextHour)) {
+          // Verificar si ya se han seleccionado dos bloques de dos horas consecutivos
+          if (this.selectedCells.length % 2 === 0) {
+            // Si se han seleccionado dos bloques consecutivos, no permitir más selecciones
+            return;
+          }
+          this.selectedCells.push({ day, hour: nextHour });
         }
       }
     }
+    if (this.isDailyHoursExceeded()) {
+        alert("Se han excedido las horas diarias permitidas.");
+      }
+      if (this.isWeeklyHoursExceeded()) {
+        alert("Se han excedido las horas semanales permitidas.");
+      }
+  }
+}
+
+
+
   }
 };
 </script>

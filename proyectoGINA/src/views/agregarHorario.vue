@@ -4,10 +4,10 @@
     <div class="container">
       <label for="docente-select">Selecciona el programa:</label>
       <div class="form-group search-container">
-        <input type="text" v-model="inputValue" @input="filterOptions" @click="toggleDropdown"
+        <input type="text" v-model="inputValue1" @input="filterOptionsProg" @click="toggleDropdownProg"
           placeholder="Escribe o selecciona..." />
-        <select v-show="showDropdown && filteredOptions.length > 0" v-model="selectedProg" @change="selectOption">
-          <option v-for="period in filteredOptions" :key="period.id_programa" :value="period.nombre">
+        <select v-show="showDropdown1 && filteredOptionsProg.length > 0" v-model="selectedProg" @change="selectOptionProg">
+          <option v-for="period in filteredOptionsProg" :key="period.id_programa" :value="period.nombre">
             {{ period.nombre }}
           </option>
         </select>
@@ -17,7 +17,7 @@
         <div class="form-group search-container">
           <input type="text" v-model="inputValue2" @input="filterOptionsDoc" @click="toggleDropdownDocente"
             placeholder="Escribe o selecciona..." />
-          <select v-show="showDropdown2 && filteredOptions.length > 0" v-model="selectedDoc" @change="selectOptionDoc">
+          <select v-show="showDropdown2 && filteredOptionsDoc.length > 0" v-model="selectedDoc" @change="selectOptionDoc">
             <option v-for="period in filteredOptionsDoc" :key="period.id_docente" :value="period.id_docente">
               {{ period.id_docente }}
             </option>
@@ -70,13 +70,13 @@ export default {
       selectedProg: null,
       selectedComp: null,
       programaEncontrado: null,
-      showDropdown: false,
+      showDropdown1: false,
       showDropdown2: false,
       showDropdown3: false,
-      inputValue:'',
+      inputValue1:'',
       inputValue2:'',
       inputValue3:'',
-      filteredOptions: [],
+      filteredOptionsProg: [],
       filteredOptionsDoc: [],
       filteredOptionsComp: [],
       id_del_ambiente: 'ID_DEL_AMBIENTE_AQUI',
@@ -88,10 +88,10 @@ export default {
     };
   },
   methods: {
-    toggleDropdown() {
-      this.showDropdown = !this.showDropdown;
-      if (this.showDropdown) {
-        this.filteredOptions = this.programas; // Restaurar opciones filtradas
+    toggleDropdownProg() {
+      this.showDropdown1 = !this.showDropdown1;
+      if (this.showDropdown1) {
+        this.filteredOptionsProg = this.programas; // Restaurar opciones filtradas
       }
     },
     toggleDropdownDocente() {
@@ -107,12 +107,12 @@ export default {
         this.filteredOptionsComp = this.competencias; // Restaurar opciones filtradas
       }
     },
-    filterOptions() {
-      const searchTerm = this.inputValue.toLowerCase();
-      this.filteredOptions = this.programas.filter(period =>
+    filterOptionsProg() {
+      const searchTerm = this.inputValue1.toLowerCase();
+      this.filteredOptionsProg = this.programas.filter(period =>
         period.nombre.toLowerCase().startsWith(searchTerm)
       );
-      this.showDropdown = true; // Mostrar el dropdown cuando haya coincidencias
+      this.showDropdown1 = true; // Mostrar el dropdown cuando haya coincidencias
     },
     filterOptionsDoc() {
       const searchTerm = this.inputValue2.toLowerCase();
@@ -136,9 +136,9 @@ export default {
       this.inputValue3 = this.selectedComp;
       this.showDropdown3 = false;
     },
-    selectOption() {
-      this.inputValue = this.selectedProg;
-      this.showDropdown = false;
+    selectOptionProg() {
+      this.inputValue1 = this.selectedProg;
+      this.showDropdown1 = false;
     },
   },
   mounted() {

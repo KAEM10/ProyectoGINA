@@ -14,6 +14,7 @@
 
 
       <div>
+        <label for="period-select">Seleccione el ambiente:</label>
         <input type="text" v-model="inputValue" @input="filterOptions" @click="toggleDropdown"
           placeholder="Escribe o selecciona..." />
         <select v-show="showDropdown && filteredOptions.length > 0" v-model="selectedAmb" @change="selectOption"
@@ -23,9 +24,50 @@
           </option>
         </select>
       </div>
-      <div v-if="selectedPeriod && selectedAmb">
-        <componentHorario :idAmbiente="selectedAmb" :key="selectedPeriod + selectedAmb" />
+      <div class="container">
+      <label for="docente-select">Selecciona el programa:</label>
+      <div class="form-group search-container">
+        <input type="text" v-model="inputValue1" @input="filterOptionsProg" @click="toggleDropdownProg"
+          placeholder="Escribe o selecciona..." />
+        <select v-show="showDropdown1 && filteredOptionsProg.length > 0" v-model="selectedProg" @change="selectOptionProg">
+          <option v-for="period in filteredOptionsProg" :key="period.id_programa" :value="period.nombre">
+            {{ period.nombre }}
+          </option>
+        </select>
       </div>
+      <div class="container">
+        <label for="docente-select">Selecciona el docente:</label>
+        <div class="form-group search-container">
+          <input type="text" v-model="inputValue2" @input="filterOptionsDoc" @click="toggleDropdownDocente"
+            placeholder="Escribe o selecciona..." />
+          <select v-show="showDropdown2 && filteredOptionsDoc.length > 0" v-model="selectedDoc" @change="selectOptionDoc">
+            <option v-for="period in filteredOptionsDoc" :key="period.id_docente" :value="period.id_docente">
+              {{ period.id_docente }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="container">
+        <label for="ambient-select">Selecciona la compentencia:</label>
+        <div class="form-group search-container" >
+          
+         
+          <input type="text" v-model="inputValue3" @input="filterOptionsComp" @click="cargarCompetencias(selectedProg); toggleDropdownCompetencia()" placeholder="Escribe o selecciona..." />
+
+          <select v-show="showDropdown3 && filteredOptionsComp.length > 0" v-model="selectedComp"
+            @change="selectOptionComp">
+            <option v-for="period in filteredOptionsComp" :key="period.nombre" :value="period.nombre">
+              {{ period.nombre }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div v-if="selectedPeriod && selectedAmb">
+  <componentHorario :idDocente="selectedDoc" :idAmbiente="selectedAmb" :key="selectedPeriod + selectedAmb" />
+</div>
+
       <div>
         <button @click="cargarAgregarHorario">Seleccionar</button>
       </div>
@@ -38,15 +80,40 @@ import HeaderComponent from '../views/header.vue';
 import componentHorario from '../views/componentHorario.vue';
 import controller from '../Controllers/controllerHorario.js';
 import controllerPrograma from '../Controllers/controllerPrograma.js';
+import controllerDocente from '../Controllers/controllerDocente.js';
 
 export default {
-  mixins: [controller, controllerPrograma],
+  mixins: [controller, controllerPrograma, controllerDocente],
   components: {
     HeaderComponent,
     componentHorario,
   },
   data() {
     return {
+      programaDerecho: null,
+      selectedProgram: '',
+      selectedDoc: '',
+      selectedCompetencia: '',
+      selectedPeriod: null,
+      selectedProgram: null,
+      selectedProg: null,
+      selectedComp: null,
+      programaEncontrado: null,
+      showDropdown1: false,
+      showDropdown2: false,
+      showDropdown3: false,
+      inputValue1:'',
+      inputValue2:'',
+      inputValue3:'',
+      filteredOptionsProg: [],
+      filteredOptionsDoc: [],
+      filteredOptionsComp: [],
+      id_del_ambiente: 'ID_DEL_AMBIENTE_AQUI',
+      searchQuery: '',
+      competencias: [],
+      periodos: [], // Asegúrate de cargar los periodos desde el controller
+      programas: [], // Asegúrate de cargar los programas desde el controller
+      ambientes: [] ,// Asegúrate de cargar los ambientes desde el controller
       inputValue: '',
       selectedPeriod: null,
       selectedProgram: null,
@@ -62,6 +129,58 @@ export default {
     };
   },
   methods: {
+    toggleDropdownProg() {
+      this.showDropdown1 = !this.showDropdown1;
+      if (this.showDropdown1) {
+        this.filteredOptionsProg = this.programas; // Restaurar opciones filtradas
+      }
+    },
+    toggleDropdownDocente() {
+      this.showDropdown2 = !this.showDropdown2;
+      if (this.showDropdown2) {
+        this.filteredOptionsDoc = this.docentes; // Restaurar opciones filtradas
+      }
+    },
+    toggleDropdownCompetencia() {
+      
+      this.showDropdown3 = !this.showDropdown3;
+      if (this.showDropdown3) {
+        this.filteredOptionsComp = this.competencias; // Restaurar opciones filtradas
+      }
+    },
+    filterOptionsProg() {
+      const searchTerm = this.inputValue1.toLowerCase();
+      this.filteredOptionsProg = this.programas.filter(period =>
+        period.nombre.toLowerCase().startsWith(searchTerm)
+      );
+      this.showDropdown1 = true; // Mostrar el dropdown cuando haya coincidencias
+    },
+    filterOptionsDoc() {
+      const searchTerm = this.inputValue2.toLowerCase();
+      this.filteredOptionsDoc = this.docentes.filter(period =>
+        period.id_docente.toLowerCase().startsWith(searchTerm)
+      );
+      this.showDropdown2 = true; // Mostrar el dropdown cuando haya coincidencias
+    },
+    filterOptionsComp() {
+      const searchTerm = this.inputValue3.toLowerCase();
+      this.filteredOptionsComp = this.competencias.filter(period =>
+        period.nombre.toLowerCase().startsWith(searchTerm)
+      );
+      this.showDropdown3 = true; // Mostrar el dropdown cuando haya coincidencias
+    },
+    selectOptionDoc() {
+      this.inputValue2 = this.selectedDoc;
+      this.showDropdown2 = false;
+    },
+    selectOptionComp() {
+      this.inputValue3 = this.selectedComp;
+      this.showDropdown3 = false;
+    },
+    selectOptionProg() {
+      this.inputValue1 = this.selectedProg;
+      this.showDropdown1 = false;
+    },
     toggleDropdown() {
       this.showDropdown = !this.showDropdown;
       if (this.showDropdown) {
@@ -92,6 +211,7 @@ export default {
 
   },
   mounted() {
+    this.cargarTabla();
     this.obtenerPeriodosActivos();
     this.obtenerAmbientes();
     this.cargarProgramas();
