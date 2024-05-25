@@ -1,50 +1,49 @@
 <template class="agregarHorario">
   <div>
     <HeaderComponent />
-    <div>{{ programaEncontrado}}</div>
-    <!-- Llamar a la función obtenerPrograma(nombre) y almacenar el resultado en una variable -->
-   
     <div class="container">
       <label for="docente-select">Selecciona el programa:</label>
       <div class="form-group search-container">
-          <input type="text" v-model="inputValue" @input="filterOptions" @click="toggleDropdown"
+        <input type="text" v-model="inputValue" @input="filterOptions" @click="toggleDropdown"
+          placeholder="Escribe o selecciona..." />
+        <select v-show="showDropdown && filteredOptions.length > 0" v-model="selectedProg" @change="selectOption">
+          <option v-for="period in filteredOptions" :key="period.id_programa" :value="period.nombre">
+            {{ period.nombre }}
+          </option>
+        </select>
+      </div>
+      <div class="container">
+        <label for="docente-select">Selecciona el docente:</label>
+        <div class="form-group search-container">
+          <input type="text" v-model="inputValue2" @input="filterOptionsDoc" @click="toggleDropdownDocente"
             placeholder="Escribe o selecciona..." />
-          <select v-show="showDropdown && filteredOptions.length > 0" v-model="selectedProg" @change="selectOption"
-            size="5">
-            <option v-for="period in filteredOptions" :key="period.id_programa" :value="period.nombre">
+          <select v-show="showDropdown2 && filteredOptions.length > 0" v-model="selectedDoc" @change="selectOptionDoc">
+            <option v-for="period in filteredOptionsDoc" :key="period.id_docente" :value="period.id_docente">
+              {{ period.id_docente }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="container">
+        <label for="ambient-select">Selecciona la compentencia:</label>
+        <div class="form-group search-container" >
+          
+         
+          <input type="text" v-model="inputValue3" @input="filterOptionsComp" @click="cargarCompetencias(selectedProg); toggleDropdownCompetencia()" placeholder="Escribe o selecciona..." />
+
+          <select v-show="showDropdown3 && filteredOptionsComp.length > 0" v-model="selectedComp"
+            @change="selectOptionComp">
+            <option v-for="period in filteredOptionsComp" :key="period.nombre" :value="period.nombre">
               {{ period.nombre }}
             </option>
           </select>
-      </div>
-      <div class="container">
-      <label for="docente-select">Selecciona el docente:</label>
-      <div class="form-group search-container">
-          <input type="text" v-model="inputValue2" @input="filterOptionsDoc" @click="toggleDropdownDocente"
-            placeholder="Escribe o selecciona..." />
-          <select v-show="showDropdown && filteredOptions.length > 0" v-model="selectedDoc" @change="selectOptionDoc"
-            size="5">
-            <option v-for="period in filteredOptionsDoc" :key="period.identificacion" :value="period.identificacion">
-              {{ period.identificacion }}
-            </option>
-          </select>
-      </div> </div>
-
-      <div class="form-group search-container">
-        <label for="competencia-select">Selecciona la competencia a orientar:</label>
-        <div class="search-box">
-          <input type="text" id="competencia-select" v-model="selectedCompetencia" placeholder="Buscar competencia" />
-          <span class="search-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <path
-                d="M10,2A8,8,0,1,0,18,10,8,8,0,0,0,10,2ZM10,14A4,4,0,1,1,14,10,4,4,0,0,1,10,14Zm7.71,4.29-3.39-3.39A6.92,6.92,0,0,0,17,10a7,7,0,1,0-2,5l3.39,3.39a1,1,0,1,0,1.42-1.42Z" />
-            </svg>
-          </span>
         </div>
       </div>
     </div>
-    <div>
-      <componentHorario />
-    </div>
+    <div v-if="selectedProg && selectedDoc &&selectedComp">
+        <componentHorario :idDocente="selectedDoc" :key="selectedProg + selectedDoc+ selectedComp" />
+      </div>
   </div>
 </template>
 
@@ -64,20 +63,25 @@ export default {
     return {
       programaDerecho: null,
       selectedProgram: '',
-      selectedDocente: '',
+      selectedDoc: '',
       selectedCompetencia: '',
-      programaEncontrado: null,
       selectedPeriod: null,
       selectedProgram: null,
       selectedProg: null,
       selectedComp: null,
+      programaEncontrado: null,
       showDropdown: false,
+      showDropdown2: false,
+      showDropdown3: false,
+      inputValue:'',
+      inputValue2:'',
+      inputValue3:'',
       filteredOptions: [],
-      competencias: [],
       filteredOptionsDoc: [],
       filteredOptionsComp: [],
       id_del_ambiente: 'ID_DEL_AMBIENTE_AQUI',
       searchQuery: '',
+      competencias: [],
       periodos: [], // Asegúrate de cargar los periodos desde el controller
       programas: [], // Asegúrate de cargar los programas desde el controller
       ambientes: [] // Asegúrate de cargar los ambientes desde el controller
@@ -91,15 +95,16 @@ export default {
       }
     },
     toggleDropdownDocente() {
-      this.showDropdown = !this.showDropdown;
-      if (this.showDropdown) {
+      this.showDropdown2 = !this.showDropdown2;
+      if (this.showDropdown2) {
         this.filteredOptionsDoc = this.docentes; // Restaurar opciones filtradas
       }
     },
     toggleDropdownCompetencia() {
-      this.showDropdown = !this.showDropdown;
-      if (this.showDropdown) {
-        this.filteredOptionsComp= this.programaEncontrado.competencias; // Restaurar opciones filtradas
+      
+      this.showDropdown3 = !this.showDropdown3;
+      if (this.showDropdown3) {
+        this.filteredOptionsComp = this.competencias; // Restaurar opciones filtradas
       }
     },
     filterOptions() {
@@ -111,29 +116,25 @@ export default {
     },
     filterOptionsDoc() {
       const searchTerm = this.inputValue2.toLowerCase();
-      this.filteredOptionsDoc= this.docentes.filter(period =>
-        period.identificacion.toLowerCase().startsWith(searchTerm)
+      this.filteredOptionsDoc = this.docentes.filter(period =>
+        period.id_docente.toLowerCase().startsWith(searchTerm)
       );
-      this.showDropdown = true; // Mostrar el dropdown cuando haya coincidencias
+      this.showDropdown2 = true; // Mostrar el dropdown cuando haya coincidencias
     },
     filterOptionsComp() {
       const searchTerm = this.inputValue3.toLowerCase();
-      this.filteredOptionsComp= this.programaEncontrado.competencias.filter(period =>
+      this.filteredOptionsComp = this.competencias.filter(period =>
         period.nombre.toLowerCase().startsWith(searchTerm)
       );
-      this.showDropdown = true; // Mostrar el dropdown cuando haya coincidencias
-    },
-    encontrarPrograma(){
-      this.programaEncontrado = this.programas.find(programa => programa.nombre === "Derecho");
-      console.log(this.programaEncontrado)
+      this.showDropdown3 = true; // Mostrar el dropdown cuando haya coincidencias
     },
     selectOptionDoc() {
       this.inputValue2 = this.selectedDoc;
-      this.showDropdown = false;
+      this.showDropdown2 = false;
     },
     selectOptionComp() {
       this.inputValue3 = this.selectedComp;
-      this.showDropdown = false;
+      this.showDropdown3 = false;
     },
     selectOption() {
       this.inputValue = this.selectedProg;
@@ -143,8 +144,6 @@ export default {
   mounted() {
     this.cargarProgramas();
     this.cargarTabla();
-    this.encontrarPrograma();
-    //this.obtenerPrograma('Derecho');
   },
   watch: {
     selectedProgram(newVal) {
@@ -156,7 +155,13 @@ export default {
     selectedProgram(newVal) {
       if (newVal) {
         this.inputValue2 = newVal;
-        this.showDropdown = false;
+        this.showDropdown2 = false;
+      }
+    },
+    selectedProgram(newVal) {
+      if (newVal) {
+        this.inputValue3 = newVal;
+        this.showDropdown3 = false;
       }
     }
 

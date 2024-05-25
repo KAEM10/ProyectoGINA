@@ -104,7 +104,20 @@ app.get('/periodos', (req, res) => {
       res.json(results);
     });
   });
-  
+  app.get('/horarioOcupadoDoc/:id', (req, res) => {
+    const id = req.params.id;
+    const query = 'SELECT dia, hora_inicio, hora_fin FROM horario WHERE id_docente = ?';
+    
+    connection.query(query, [id], (err, results) => {
+      if (err) {
+        console.error('Error ejecutando la consulta:', err);
+        res.status(500).send('Error ejecutando la consulta');
+        return;
+      }
+      console.log(results + "id"+ id);
+      res.json(results);
+    });
+  });
   
 app.get('/cargarTablaPeriodo', (req, res) => {
     const query = `

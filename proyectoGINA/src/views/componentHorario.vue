@@ -1,8 +1,3 @@
-
-
-
-
-
 <template>
   <div>
     <div class="schedule">
@@ -12,16 +7,17 @@
       </div>
       <div class="row" v-for="(hour, index) in hours" :key="index">
         <div class="cell">{{ hour }}</div>
-        <div
-          class="cell"
-          v-for="day in days" 
-          :key="day + index"
+        <div class="cell" v-for="day in days" :key="day + index"
           :class="{ selected: isSelected(day, hour), occupied: isOccupied(day, hour) }"
-          @click="toggleSelection(day, hour)"
-        ></div>
+          @click="toggleSelection(day, hour)"></div>
       </div>
     </div>
-    <div><p>{{ idAmbiente }}</p></div>
+    <div>
+      <p>{{ idAmbiente }}</p>
+    </div>
+    <div>
+      <p>{{ idDocente }}</p>
+    </div>
   </div>
 </template>
 
@@ -34,6 +30,10 @@ export default {
     idAmbiente: {
       type: String,
       required: true
+    },
+    idDocente: {
+      type: String,
+      required: true
     }
   },
   data() {
@@ -41,7 +41,7 @@ export default {
       days: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
       hours: this.generateHours(7, 22),
       selectedCells: [],
-      horariosOcupados: []
+      horariosOcupados: [],
     };
   },
   watch: {
@@ -49,6 +49,15 @@ export default {
       handler(newVal) {
         if (newVal) {
           this.obtenerHorariosOcupados(newVal);
+        }
+      },
+      immediate: true
+    },
+    idDocente: {
+      handler(newVal) {
+        if (newVal) {
+          console.log(newVal)
+          this.obtenerHorariosOcupadosDocente(newVal);
         }
       },
       immediate: true
@@ -68,10 +77,20 @@ export default {
       return this.selectedCells.some(cell => cell.day === day && cell.hour === hour);
     },
     isOccupied(day, hour) {
-      return this.horariosOcupados.some(horario =>
+      // Verifica si el horario está ocupado en la primera lista
+      const isOccupiedInFirstList = this.horariosOcupados.some(horario =>
         horario.dia === day && this.isBetween(hour, horario.hora_inicio, horario.hora_fin)
       );
+
+      // Verifica si el horario está ocupado en la segunda lista
+      const isOccupiedInSecondList = this.horariosOcupados2.some(horario =>
+        horario.dia === day && this.isBetween(hour, horario.hora_inicio, horario.hora_fin)
+      );
+
+      // Retorna true si el horario está ocupado en alguna de las dos listas
+      return isOccupiedInFirstList || isOccupiedInSecondList;
     },
+
     isBetween(hour, startHour, endHour) {
       const hourToNumber = (h) => {
         const [time, period] = h.split(' ');
@@ -103,12 +122,15 @@ export default {
   gap: 5px;
   margin: 20px;
 }
+
 .header {
   display: contents;
 }
+
 .row {
   display: contents;
 }
+
 .cell {
   border: 1px solid #ccc;
   padding: 10px;
@@ -116,20 +138,25 @@ export default {
   background-color: #f9f9f9;
   cursor: pointer;
 }
+
 .cell:first-child {
   background-color: #e9e9e9;
   font-weight: bold;
 }
+
 .header .cell {
   background-color: #e9e9e9;
   font-weight: bold;
 }
+
 .cell.selected {
   background-color: #007bff;
   color: white;
 }
+
 .cell.occupied {
   background-color: #ff0000;
-  pointer-events: none; /* Deshabilita eventos de clic en celdas ocupadas */
+  pointer-events: none;
+  /* Deshabilita eventos de clic en celdas ocupadas */
 }
 </style>

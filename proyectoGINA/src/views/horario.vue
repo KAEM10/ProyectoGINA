@@ -1,6 +1,7 @@
 <template>
   <div>
     <HeaderComponent />
+    <div> {{ horario }}</div>
     <div class="container">
       <div class="form-group">
         <label for="period-select">Seleccione período académico:</label>
@@ -50,6 +51,7 @@ export default {
       selectedPeriod: null,
       selectedProgram: null,
       selectedAmb: null,
+      horario:[],
       showDropdown: false,
       filteredOptions: [],
       id_del_ambiente: 'ID_DEL_AMBIENTE_AQUI',
@@ -78,8 +80,16 @@ export default {
       this.showDropdown = false;
     },
     cargarAgregarHorario() {
-      this.$router.push('/agregarHorario');
+      // Pasa los datos necesarios como parámetros de la ruta
+      this.$router.push({
+        path: '/agregarHorario',
+        query: {
+          obtenerHorariosOcupados: this.obtenerHorariosOcupados,
+        }
+      });
     },
+
+
   },
   mounted() {
     this.obtenerPeriodosActivos();

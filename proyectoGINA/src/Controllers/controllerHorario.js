@@ -2,7 +2,8 @@ import { getAmbiente } from '@/Models/modelAmbiente';
 import {
     getPeriodosActivos,
     getAmbientes,
-    getHorario
+    getHorario,
+    getHorarioDoc,
 } from '../Models/modelHorario';
 
 export default {
@@ -11,6 +12,7 @@ export default {
             periodos: [],
             ambientes: [],
             horariosOcupados:[],
+            horariosOcupados2:[],
             editId: '',
         };
     },
@@ -38,7 +40,19 @@ export default {
             } catch (error) {
                 console.error('Error al cargar periodos:', error);
             }
+        },
+        async obtenerHorariosOcupadosDocente(id){
+            try {
+                const data = await getHorarioDoc(id);
+                this.horariosOcupados2=data;
+            } catch (error) {
+                console.error('Error al cargar periodos:', error);
+            }
         }
+
+        
+        
         
     }
+    
 }

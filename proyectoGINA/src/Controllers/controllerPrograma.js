@@ -1,46 +1,30 @@
-import {
-    getProgramas
-} from '../Models/modelPrograma';
+import { getProgramas } from '../Models/modelPrograma';
+import { getCompetenciasByNombrePrograma } from '../Models/modelPrograma'; // Asegúrate de importar la función correcta
 
 export default {
-
     data() {
         return {
             programas: [],
-            programa: null,
+            program: '',
             competencias: []
         };
     },
-    methods:{
+    methods: {
         async cargarProgramas() {
             try {
-              
-                const data = await getProgramas();
-                
-                this.programas = data;  
+                const data = await getProgramas(); // Esperar la promesa
+                this.programas = data;
             } catch (error) {
-              console.error('Error al cargar programas:', error);
+                console.error('Error al cargar programas:', error);
             }
         },
-        /*obtenerPrograma(nombre){
-            this.cargarProgramas;
-            console.log(this.programas.length);
-            // Inicializar una variable para almacenar el programa encontrado
-            let programaEncontrado = null;
-            
-            // Iterar sobre la lista de programas
-            for (let i = 0; i < this.programas.length; i++) {
-                // Verificar si el nombre del programa actual coincide con el nombre proporcionado
-                if (this.programas[i].nombre === nombre) {
-                    // Asignar el programa actual a la variable programaEncontrado
-                    console.log(programas[i])
-                    programaEncontrado = this.programas[i];
-                    // Romper el bucle una vez que se encuentra el programa
-                    break;
-                }
+        async cargarCompetencias(programaNombre) {
+            try {
+                const competencias = await getCompetenciasByNombrePrograma(programaNombre);
+                this.competencias = competencias ? competencias : [];
+            } catch (error) {
+                console.error('Error al cargar competencias:', error);
             }
-            this.programa=programaEncontrado;
-        }*/
-    }
-    
-}
+        }
+    },
+};
