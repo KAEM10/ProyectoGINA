@@ -83,23 +83,20 @@ export default {
       return dailyHours;
     },
     isWeeklyHoursExceeded() {
-      this.obtenerDocenteContrato(this.idDocente);
-      if(this.docenteContrato==="PT"){
+      if(this.docenteCT==="PT"){
         this.horasMaximasSemanales=32;
       }
-      if(this.docenteContrato==="CNT"){
+      if(this.docenteCT==="CNT"){
         this.horasMaximasSemanales=40;
       }
       return this.countWeeklyHours() > this.horasMaximasSemanales; // Verificar si las horas semanales exceden 40
     },
     isDailyHoursExceeded() {
-      this.obtenerDocenteContrato(this.idDocente);
-      alert(this.docenteCT)
       const dailyHours = this.countDailyHours();
-      if(this.docenteContrato==="PT"){
+      if(this.docenteCT==="PT"){
         this.horasMaximasDiarias=8;
       }
-      if(this.docenteContrato==="CNT"){
+      if(this.docenteCT==="CNT"){
         this.horasMaximasDiarias=10;
       }
       alert(this.horasMaximasDiarias);
@@ -202,7 +199,7 @@ export default {
     }
   },
   mounted(){
-    
+    this.obtenerDocenteContrato(this.idDocente);
   }
 };
 
