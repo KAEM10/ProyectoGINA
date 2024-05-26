@@ -11,7 +11,6 @@
           @click="toggleSelection(day, hour)"></div>
       </div>
     </div>
-    <div>ss{{ idPeriodo }}</div>
     <div>
       <button @click="enviarDatos">Seleccionar</button>
     </div>
@@ -77,7 +76,6 @@ export default {
       const horasPorDia = {};
 
       // Iterar sobre los horarios ocupados y calcular las horas por día
-      console.log("Calculando horas ocupadas por día desde horarios ocupados...");
       horarios.forEach(horario => {
         const dia = horario.dia;
         const horaInicio = new Date(`2000-01-01T${horario.hora_inicio}`);
@@ -92,7 +90,6 @@ export default {
       });
 
       // Iterar sobre las celdas seleccionadas y agregar las horas por día
-      console.log("Calculando horas ocupadas por celda seleccionada...");
       const selectedCellsArray = Array.from(this.selectedCells); // Convertir el Proxy en un array
       selectedCellsArray.forEach(cell => {
         const dia = cell.day;
@@ -103,16 +100,11 @@ export default {
         }
 
         horasPorDia[dia] += duracionHoras; // Sumar la duración de la franja horaria al total de horas para ese día
-        console.log(`Agregadas ${duracionHoras} horas para ${dia} (${cell.hour})`);
+        
       });
 
-      // Imprimir los resultados de las horas por día
-      console.log("Resultados de las horas ocupadas por día:");
-      for (const dia in horasPorDia) {
-        console.log(`Horas ocupadas en ${dia}: ${horasPorDia[dia]}`);
-      }
+   
 
-      console.log("Horas ocupadas por día calculadas con éxito.");
       return horasPorDia;
     },
 
@@ -268,7 +260,8 @@ export default {
          
         this.agregarHorario(horario);
       });
-      // Aquí puedes enviar 'horarios' a la base de datos
+
+      window.location.reload();
     }
   },
   mounted() {

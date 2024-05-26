@@ -1,7 +1,6 @@
 <template>
   <div>
     <HeaderComponent />
-    <div> {{ horario }}</div>
     <div class="container">
       <div class="form-group">
         <label for="period-select">Seleccione período académico:</label>
@@ -25,54 +24,67 @@
         </select>
       </div>
       <div class="container">
-      <label for="docente-select">Selecciona el programa:</label>
-      <div class="form-group search-container">
-        <input type="text" v-model="inputValue1" @input="filterOptionsProg" @click="toggleDropdownProg"
-          placeholder="Escribe o selecciona..." />
-        <select v-show="showDropdown1 && filteredOptionsProg.length > 0" v-model="selectedProg" @change="selectOptionProg">
-          <option v-for="period in filteredOptionsProg" :key="period.nombre" :value="period.nombre">
-            {{ period.nombre }}
-          </option>
-        </select>
-      </div>
-      <div class="container">
-        <label for="docente-select">Selecciona el docente:</label>
+        <label for="docente-select">Selecciona el programa:</label>
         <div class="form-group search-container">
-          <input type="text" v-model="inputValue2" @input="filterOptionsDoc" @click="toggleDropdownDocente"
+          <input type="text" v-model="inputValue1" @input="filterOptionsProg" @click="toggleDropdownProg"
             placeholder="Escribe o selecciona..." />
-          <select v-show="showDropdown2 && filteredOptionsDoc.length > 0" v-model="selectedDoc" @change="selectOptionDoc">
-            <option v-for="period in filteredOptionsDoc" :key="period.id_docente" :value="period.id_docente">
-              {{ period.id_docente }}
-            </option>
-          </select>
-        </div>
-      </div>
-
-      <div class="container">
-        <label for="ambient-select">Selecciona la compentencia:</label>
-        <div class="form-group search-container" >
-
-          <input type="text" v-model="inputValue3" @input="filterOptionsComp" @click="cargarCompetencias(selectedProg); toggleDropdownCompetencia()" placeholder="Escribe o selecciona..." />
-
-          <select v-show="showDropdown3 && filteredOptionsComp.length > 0" v-model="selectedComp"
-            @change="selectOptionComp">
-            <option v-for="period in filteredOptionsComp" :key="period.nombre" :value="period.nombre">
+          <select v-show="showDropdown1 && filteredOptionsProg.length > 0" v-model="selectedProg"
+            @change="selectOptionProg">
+            <option v-for="period in filteredOptionsProg" :key="period.nombre" :value="period.nombre">
               {{ period.nombre }}
             </option>
           </select>
         </div>
-      </div>
-    </div>
-    
-    <div>{{ this.selectedPeriod }}</div>
-    <div>{{ this.selectedPeriodo() }}</div>
-    <div>{{ this.periodo.id_periodo }}</div>
-    <div>{{ this.selectedP }}</div>
-    <div v-if="selectedPeriod && selectedAmb && selectedProg && selectedDoc && selectedComp">
-  <componentHorario :idDocente="selectedDoc" :idAmbiente="selectedAmb" :idPeriodo="selectedP" :key="selectedPeriod + selectedAmb+selectedProg + selectedDoc +selectedComp" />
-</div>
+        <div class="container">
+          <label for="docente-select">Selecciona el docente:</label>
+          <div class="form-group search-container">
+            <input type="text" v-model="inputValue2" @input="filterOptionsDoc" @click="toggleDropdownDocente"
+              placeholder="Escribe o selecciona..." />
+            <select v-show="showDropdown2 && filteredOptionsDoc.length > 0" v-model="selectedDoc"
+              @change="selectOptionDoc">
+              <option v-for="period in filteredOptionsDoc" :key="period.id_docente" :value="period.id_docente">
+                {{ period.id_docente }}
+              </option>
+            </select>
+          </div>
+        </div>
 
-      
+        <div class="container">
+          <label for="ambient-select">Selecciona la compentencia:</label>
+          <div class="form-group search-container">
+
+            <input type="text" v-model="inputValue3" @input="filterOptionsComp"
+              @click="cargarCompetencias(selectedProg); toggleDropdownCompetencia()"
+              placeholder="Escribe o selecciona..." />
+
+            <select v-show="showDropdown3 && filteredOptionsComp.length > 0" v-model="selectedComp"
+              @change="selectOptionComp">
+              <option v-for="period in filteredOptionsComp" :key="period.nombre" :value="period.nombre">
+                {{ period.nombre }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div>{{ this.selectedPeriodo() }}</div>
+      <div v-if="selectedPeriod && selectedAmb && selectedProg && selectedDoc && selectedComp">
+        <!-- Barra roja para visualizar ambiente ocupado -->
+        <div style="display: flex; align-items: center; margin-bottom: 5px;">
+          <div style="background-color: red; height: 10px; width: 50px;"></div>
+          <div style="margin-left: 10px;">Ambiente Ocupado</div>
+        </div>
+
+        <!-- Barra café para indicar que el docente está ocupado -->
+        <div style="display: flex; align-items: center; margin-bottom: 5px;">
+          <div style="background-color: brown; height: 10px; width: 50px;"></div>
+          <div style="margin-left: 10px;">Docente Ocupado</div>
+        </div>
+        <componentHorario :idDocente="selectedDoc" :idAmbiente="selectedAmb" :idPeriodo="selectedP"
+          :key="selectedPeriod + selectedAmb + selectedProg + selectedDoc + selectedComp" />
+      </div>
+
+
     </div>
   </div>
 </template>
@@ -104,9 +116,9 @@ export default {
       showDropdown1: false,
       showDropdown2: false,
       showDropdown3: false,
-      inputValue1:'',
-      inputValue2:'',
-      inputValue3:'',
+      inputValue1: '',
+      inputValue2: '',
+      inputValue3: '',
       filteredOptionsProg: [],
       filteredOptionsDoc: [],
       filteredOptionsComp: [],
@@ -115,28 +127,28 @@ export default {
       competencias: [],
       periodos: [], // Asegúrate de cargar los periodos desde el controller
       programas: [], // Asegúrate de cargar los programas desde el controller
-      ambientes: [] ,// Asegúrate de cargar los ambientes desde el controller
+      ambientes: [],// Asegúrate de cargar los ambientes desde el controller
       inputValue: '',
       periodo: [],
-      selectedP:null ,
+      selectedP: null,
       selectedPeriod: null,
       selectedProgram: null,
       selectedAmb: null,
-      horario:[],
+      horario: [],
       showDropdown: false,
       filteredOptions: [],
       id_del_ambiente: 'ID_DEL_AMBIENTE_AQUI',
       searchQuery: '',
-      periodos: [], // Asegúrate de cargar los periodos desde el controller
-      programas: [], // Asegúrate de cargar los programas desde el controller
-      ambientes: [] // Asegúrate de cargar los ambientes desde el controller
+      periodos: [], 
+      programas: [],
+      ambientes: [] 
     };
   },
   methods: {
     selectedPeriodo() {
       // Devuelve el período completo basado en el ID seleccionado
-      this.periodo= this.periodos.find(period => period.nombre === this.selectedPeriod) || {};
-      this.selectedP=this.periodo.id_periodo
+      this.periodo = this.periodos.find(period => period.nombre === this.selectedPeriod) || {};
+      this.selectedP = this.periodo.id_periodo
     },
     toggleDropdownProg() {
       this.showDropdown1 = !this.showDropdown1;
@@ -151,7 +163,7 @@ export default {
       }
     },
     toggleDropdownCompetencia() {
-      
+
       this.showDropdown3 = !this.showDropdown3;
       if (this.showDropdown3) {
         this.filteredOptionsComp = this.competencias; // Restaurar opciones filtradas
