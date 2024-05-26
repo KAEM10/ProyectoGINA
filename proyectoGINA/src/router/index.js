@@ -5,7 +5,6 @@ import docente from '../views/docente.vue'
 import ambiente from '../views/ambiente.vue'
 import horario from '../views/horario.vue'
 import agregarHorario from '../views/agregarHorario.vue'
-import horarioDocente from '../views/horarioDocente.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -49,14 +48,6 @@ const router = createRouter({
       path: '/horario',
       name: 'horario',
       component: horario,
-      meta: {
-        requiresAuth: true // Esta ruta requiere autenticación
-      }
-    },
-    {
-      path: '/horarioDocente',
-      name: 'horarioDocente',
-      component: horarioDocente,
       meta: {
         requiresAuth: true // Esta ruta requiere autenticación
       }
