@@ -7,8 +7,7 @@
       </div>
       <div class="row" v-for="(hour, index) in hours" :key="index">
         <div class="cell">{{ hour }}</div>
-        <div class="cell" v-for="day in days" :key="day + index"
-          :class="cellClasses(day, hour)"
+        <div class="cell" v-for="day in days" :key="day + index" :class="cellClasses(day, hour)"
           @click="toggleSelection(day, hour)"></div>
       </div>
     </div>
@@ -78,34 +77,30 @@ export default {
         if (!dailyHours[cell.day]) {
           dailyHours[cell.day] = 0; // Inicializar las horas diarias para cada día en 0
         }
+
         dailyHours[cell.day] += 2; // Sumar 2 horas por cada celda seleccionada
+        console.log(dailyHours[cell.day])
       });
       return dailyHours;
     },
     isWeeklyHoursExceeded() {
-      if(this.docenteCT==="PT"){
-        this.horasMaximasSemanales=32;
+      if (this.docenteCT === "PT") {
+        this.horasMaximasSemanales = 32;
       }
-      if(this.docenteCT==="CNT"){
-        this.horasMaximasSemanales=40;
+      if (this.docenteCT === "CNT") {
+        this.horasMaximasSemanales = 40;
       }
       return this.countWeeklyHours() > this.horasMaximasSemanales; // Verificar si las horas semanales exceden 40
     },
-    isDailyHoursExceeded() {
+    isDailyHoursExceeded(day) {
       const dailyHours = this.countDailyHours();
-      if(this.docenteCT==="PT"){
-        this.horasMaximasDiarias=8;
+      if (this.docenteCT === "PT") {
+        this.horasMaximasDiarias = 8;
       }
-      if(this.docenteCT==="CNT"){
-        this.horasMaximasDiarias=10;
+      if (this.docenteCT === "CNT") {
+        this.horasMaximasDiarias = 10;
       }
-      alert(this.horasMaximasDiarias);
-      for (const day in dailyHours) {
-        if (dailyHours[day] > this.horasMaximasDiarias) { // Verificar si las horas diarias exceden 8 para algún día
-          return true;
-        }
-      }
-      return false;
+      return dailyHours[day] > this.horasMaximasDiarias;
     },
     getOccupiedCells() {
       const occupiedCells = [];
@@ -170,36 +165,39 @@ export default {
       };
       return hourToNumber(hour) >= hourToNumber(startHour) && hourToNumber(hour) < hourToNumber(endHour);
     },
-    toggleSelection(day, hour) {
-      // Verificar si la celda está ocupada
-      if (!this.isOccupied(day, hour)) {
-        // Verificar si ya se ha alcanzado el límite de 3 bloques de dos horas
-        if (this.selectedCells.length >= 6) {
-          return; // No permitir más selecciones si se alcanzó el límite
-        }
 
-        // Verificar si la celda ya está seleccionada
-        const cellIndex = this.selectedCells.findIndex(cell => cell.day === day && cell.hour === hour);
-        if (cellIndex >= 0) {
-          // Si la celda ya está seleccionada, deseleccionarla
-          this.selectedCells.splice(cellIndex, 1);
-        } else {
-          // Si no está seleccionada, agregarla a las selecciones
-          this.selectedCells.push({ day, hour });
-        }
-
-        // Verificar si se exceden las horas diarias o semanales
-        if (this.isDailyHoursExceeded()) {
-          alert("Se han excedido las horas diarias permitidas.");
-        }
-        if (this.isWeeklyHoursExceeded()) {
-          alert("Se han excedido las horas semanales permitidas.");
-        }
-      }
+    
+toggleSelection(day, hour) {
+  // Verificar si la celda está ocupada
+  if (!this.isOccupied(day, hour)) {
+    // Verificar si ya se ha alcanzado el límite de 3 bloques de dos horas
+    if (this.selectedCells.length >= 6) {
+      alert("Se han excedido las horas semanales permitidas.");
+      return; // No permitir más selecciones si se alcanzó el límite
     }
+
+    // Verificar si ya se excedió el límite de horas diarias para este día
+    if (this.isDailyHoursExceeded(day)) {
+      alert("Se han excedido las horas diarias permitidas para este día.");
+      return; // No permitir más selecciones si se excedieron las horas diarias para este día
+    }
+
+    // Verificar si la celda ya está seleccionada
+    const cellIndex = this.selectedCells.findIndex(cell => cell.day === day && cell.hour === hour);
+    if (cellIndex >= 0) {
+      // Si la celda ya está seleccionada, deseleccionarla
+      this.selectedCells.splice(cellIndex, 1);
+    } else {
+      // Si no está seleccionada, agregarla a las selecciones
+      this.selectedCells.push({ day, hour });
+    }
+  }
+},
+
   },
-  mounted(){
+  mounted() {
     this.obtenerDocenteContrato(this.idDocente);
+
   }
 };
 
