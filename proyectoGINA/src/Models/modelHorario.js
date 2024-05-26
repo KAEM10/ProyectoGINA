@@ -28,3 +28,8 @@ export const createHorario = async (horario) => {
     const response = await axios.post(`${API_URL}/crearHorario`, horario);
     return response.data;
   };
+
+  export const listaHoras = async (id) => {
+    const response = await axios.get(`${API_URL}/horasDocente/${id}`);
+    return response.data;
+  };

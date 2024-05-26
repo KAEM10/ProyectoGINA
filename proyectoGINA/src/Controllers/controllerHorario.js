@@ -17,6 +17,7 @@ export default {
             ambientes: [],
             horariosOcupados:[],
             horariosOcupados2:[],
+            horariosOcupadosDoc:[],
             editId: '',
         };
     },
@@ -41,6 +42,14 @@ export default {
             try {
                 const data = await getHorario(id);
                 this.horariosOcupados = data;
+            } catch (error) {
+                console.error('Error al cargar periodos:', error);
+            }
+        },
+        async obtenerHorariosOcupadosVistaDoc(id){
+            try {
+                const data = await listaHoras(id);
+                this.horariosOcupadosDoc = data;
             } catch (error) {
                 console.error('Error al cargar periodos:', error);
             }

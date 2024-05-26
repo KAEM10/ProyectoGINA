@@ -116,6 +116,21 @@ app.get('/periodos', (req, res) => {
       res.json(results);
     });
   });
+
+
+  app.get('/horasDocente/:id', (req, res) => {
+    const idDoc = req.params.id;
+    const query = 'SELECT h.id_horario,a.codigo,a.nombre, h.dia, h.hora_inicio,h.hora_fin FROM horario h inner join ambienteaprendizaje a on h.id_ambiente= a.codigo where h.id_docente= ?';
+    
+    connection.query(query, [idDoc], (err, results) => {
+      if (err) {
+        console.error('Error ejecutando la consulta de horarios:', err);
+        res.status(500).send('Error ejecutando la consulta');
+        return;
+      }
+      res.json(results);
+    });
+  });
   
 app.get('/cargarTablaPeriodo', (req, res) => {
     const query = `
