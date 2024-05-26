@@ -13,7 +13,7 @@
         <p><strong>Estado:</strong> {{ docenteById.estado }}</p>
         </div>
     </div>
-        <componentHorario :idDocente="selectedDoc" :idAmbiente="selectedAmb" :key="selectedPeriod + selectedAmb" />
+        <componentHorario :idDocente="selectedDoc" />
     </div>
 </template>
 
@@ -30,6 +30,12 @@
       HeaderComponent,
       componentHorario,
     },
+    props: {
+    idDocente: {
+      type: String,
+      required: true
+    }
+  },
     data() {
       return {
         programaDerecho: null,
@@ -160,12 +166,14 @@
       this.ObtenerDocenteById(localStorage.getItem('token'));
     },
     watch: {
-      selectedPeriod(newVal) {
+      idDocente: {
+      handler(newVal) {
         if (newVal) {
-          this.inputValue = newVal;
-          this.showDropdown = false;
+          this.obtenerHorariosOcupadosDocente(newVal);
         }
-      }
+      },
+      immediate: true
+    }
     }
   };
 </script>
