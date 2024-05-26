@@ -59,6 +59,7 @@ export default {
             try {
                 const data = await getHorarioDoc(id);
                 this.horariosOcupados2=data;
+                console.log(this.horariosOcupados2)
             } catch (error) {
                 console.error('Error al cargar periodos:', error);
             }

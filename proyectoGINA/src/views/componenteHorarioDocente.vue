@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div>{{ this.horariosOcupados2 }}</div>
     <div class="schedule">
       <div class="header">
         <div class="cell"></div>
@@ -7,8 +8,7 @@
       </div>
       <div class="row" v-for="(hour, index) in hours" :key="index">
         <div class="cell">{{ hour }}</div>
-        <div class="cell" v-for="(day, dayIndex) in days" :key="dayIndex" :class="getCellClass(day, hour)">
-          {{ getAmbienteName(day, hour) }}
+        <div class="cell" v-for="(day, dayIndex) in days" :key="dayIndex" :class="cellClasses(day, hour)">
         </div>
       </div>
     </div>
@@ -23,20 +23,31 @@ import controller from '../Controllers/controllerHorario.js'; // Importar el mix
 
 export default {
   mixins: [controller],
-  
+  props: {
+    idDocente: {
+      type: String,
+      required: true
+    },
+  },
   data() {
     return {
       days: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
       hours: this.generateHours(),
       selectedCells: [],
-      scheduleData: [ // Añade la información de los horarios aquí
-        { nombreAmbiente: 'Aula 101', dia: 'Lunes', horaInicio: '7:00', horaFin: '9:00' },
-        { nombreAmbiente: 'Aula 101', dia: 'Miércoles', horaInicio: '11:00', horaFin: '13:00' },
-        // Añade más información de horarios según necesites
-      ],
+      horariosOcupados2: [],
     };
   },
-  
+
+  watch: {
+    idDocente: {
+      handler(newVal) {
+        if (newVal) {
+          this.obtenerHorariosOcupadosDocente(newVal);
+        }
+      },
+      immediate: true
+    }
+  },
   methods: {
     formatHour(startHour, endHour) {
       return `${startHour.split(':')[0]} ${startHour.split(' ')[1]} - ${endHour.split(':')[0]} ${endHour.split(' ')[1]}`;
@@ -52,20 +63,61 @@ export default {
         '8 PM - 10 PM'
       ];
     },
-    getCellClass(day, hour) {
-      const schedule = this.scheduleData.find(item => item.dia === day && this.formatHour(item.horaInicio, item.horaFin) === hour);
-      if (schedule) {
-        return 'cell occupied-red'; // Puedes definir más clases según necesites
+    getOccupiedCells() {
+      console.log(this.horariosOcupados2)
+      const occupiedCells = [];
+      this.horariosOcupados2.forEach(horario => {
+        occupiedCells.push({ day: horario.dia, hour: this.formatHour(horario.hora_inicio, horario.hora_fin) });
+      });
+      return occupiedCells;
+    },
+    cellClasses(day, hour) {
+      const schedule2 = this.horariosOcupados2.find(item => item.dia === day && this.formatHour(item.hora_inicio, item.hora_fin) === hour);
+      const schedule1 = this.horariosOcupados.find(item => item.dia === day && this.formatHour(item.hora_inicio, item.hora_fin) === hour);
+
+      if (schedule2) {
+        console.log("Horario ocupado 2:", schedule2);
       }
-      return 'cell';
+
+      if (schedule1) {
+        console.log("Horario ocupado 1:", schedule1);
+      }
+
+      return {
+        'occupied-brown': this.isOccupied(day, hour) === 'secondList'
+      };
     },
-    getAmbienteName(day, hour) {
-      const schedule = this.scheduleData.find(item => item.dia === day && this.formatHour(item.horaInicio, item.horaFin) === hour);
-      return schedule ? schedule.nombreAmbiente : '';
+
+    isOccupied(day, hour) {
+      console.log("hpta")
+      // Verifica si el horario está ocupado en la segunda lista
+      const isOccupiedInSecondList = this.horariosOcupados2.some(horario =>
+        horario.dia === day && this.isBetween(hour, horario.hora_inicio, horario.hora_fin)
+      );
+
+      if (isOccupiedInSecondList) return 'secondList';
+
+      // Retorna null si el horario no está ocupado en ninguna de las dos listas
+      return null;
     },
+    isBetween(hour, startHour, endHour) {
+      const hourToNumber = (h) => {
+        const [timeRange] = h.split(' - ');
+        const [time, period] = timeRange.split(' ');
+        let [hours, minutes] = time.split(':').map(Number);
+        if (period === 'PM' && hours !== 12) hours += 12;
+        if (period === 'AM' && hours === 12) hours = 0;
+        return hours * 60 + (minutes || 0);
+      };
+      return hourToNumber(hour) >= hourToNumber(startHour) && hourToNumber(hour) < hourToNumber(endHour);
+    },
+
+    enviarDatos() {
+      // Aquí puedes implementar la lógica para enviar los datos seleccionados.
+      // Por ejemplo, podrías llamar a una función para procesar los datos y enviarlos al backend.
+      console.log("Datos seleccionados:", this.selectedCells);
+    }
   },
-  mounted() {
-  }
 };
 </script>
 
@@ -110,6 +162,9 @@ export default {
 
 .cell.occupied-red {
   background-color: #ff0000;
-  pointer-events: none;
+}
+
+.cell.occupied-brown {
+  background-color: #8b4513;
 }
 </style>

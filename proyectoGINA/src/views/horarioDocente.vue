@@ -13,7 +13,7 @@
         <p><strong>Estado:</strong> {{ docenteById.estado }}</p>
         </div>
     </div>
-        <componenteHorarioDocente />
+        <componenteHorarioDocente :idDocente="docenteById.id_docente"/>
     </div>
 </template>
 
