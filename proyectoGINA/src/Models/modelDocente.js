@@ -31,3 +31,8 @@ export const createUsuario = async (usuario) => {
   const response = await axios.post(`${API_URL}/crearUsuario`, usuario);
   return response.data;
 };
+
+export const docenteByIdUsuario = async (id) => {
+  const response = await axios.get(`${API_URL}/docenteById/${id}`);
+  return response.data;
+};

@@ -7,7 +7,7 @@ import {
     updateDocente,
     deleteDocente,
     createUsuario,
-    
+    docenteByIdUsuario
   } from '../Models/modelDocente';
   
   export default {
@@ -45,6 +45,9 @@ import {
         docentes: [],
         usuarios: [],
         parametro: '',
+        docenteById:[],
+        usuarioSesion:JSON.parse(localStorage.getItem('usuario')),
+        admin:false,
         tablaVacia: true,
         showUserMenu: false,
         showPeriodoDocOptions: false,
@@ -53,6 +56,29 @@ import {
       };
     },
     methods: {
+      rolUsuario(){
+        
+        if(this.usuarioSesion.rol=="coordinador"){
+          console.log(this.usuarioSesion.rol)
+          this.admin=true;
+        }else{
+          console.log(this.usuarioSesion.rol)
+          this.admin=false;
+        }
+      },
+
+      async ObtenerDocenteById(id) {
+        try {
+          
+            const data = await docenteByIdUsuario(id);
+            console.log(data)
+            this.docenteById = data[0];
+            this.rolUsuario()
+          
+        } catch (error) {
+          console.error('Error al cargar Docentes por Id:', error);
+        }
+      },
       async cargarDocente(parametro) {
         try {
           if (parametro === "") {

@@ -51,8 +51,7 @@
       <div class="container">
         <label for="ambient-select">Selecciona la compentencia:</label>
         <div class="form-group search-container" >
-          
-         
+
           <input type="text" v-model="inputValue3" @input="filterOptionsComp" @click="cargarCompetencias(selectedProg); toggleDropdownCompetencia()" placeholder="Escribe o selecciona..." />
 
           <select v-show="showDropdown3 && filteredOptionsComp.length > 0" v-model="selectedComp"

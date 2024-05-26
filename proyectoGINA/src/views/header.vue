@@ -9,9 +9,10 @@
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item dropdown" @click="showOptions">
+                    <li v-show="admin" class="nav-item dropdown" @click="showOptions">
                         <router-link to="/periodoAcademico" class="navbar-brand">
                             <i class="bi bi-card-text"></i> Periodo Academico
                         </router-link>
@@ -20,7 +21,7 @@
                             <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'gestionar')">Gestionar Periodo</a>
                         </div>
                     </li>
-                    <li class="nav-item dropdown" @click="showOptionsDoc">
+                    <li v-show="admin" class="nav-item dropdown" @click="showOptionsDoc">
                         <router-link to="/docente" class="navbar-brand">
                             <i class="bi bi-card-text"></i> Docentes
                         </router-link>
@@ -29,7 +30,7 @@
                             <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'gestionar')">Gestionar Docentes</a>
                         </div>
                     </li>
-                    <li class="nav-item dropdown" @click="showOptionsAmb">
+                    <li v-show="admin" class="nav-item dropdown" @click="showOptionsAmb">
                         <router-link to="/ambiente" class="navbar-brand">
                             <i class="bi bi-card-text"></i> Ambientes Academicos
                         </router-link>
@@ -38,7 +39,7 @@
                             <a class="nav-link" href="#" @click="$emit('cambiarEstado', 'gestionar')">Gestionar Ambiente</a>
                         </div>
                     </li>
-                    <li class="nav-item">
+                    <li v-show="admin" class="nav-item">
                         <router-link to="/horario" class="nav-link">
                             <i class="bi bi-calendar3"></i> Horarios
                         </router-link>
@@ -60,9 +61,11 @@
 </template>
 
 <script>
+import controllerDoc from '../Controllers/controllerDocente'
 export default {
     name: 'header',
     components: {},
+    mixins: [controllerDoc],
     emits: ['cambiarEstado'],
     
     data() {
@@ -71,7 +74,14 @@ export default {
             showDocenteOptions: false,
             showAmbienteOptions: false,
             showUserMenu: false,
+            tokem:''
         };
+    },
+    mounted() {
+        // Recuperar el token almacenado en localStorage
+        this.token = localStorage.getItem('token');
+        this.ObtenerDocenteById(this.token.id);
+        
     },
     methods: {
         showOptions() {

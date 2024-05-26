@@ -232,7 +232,6 @@ app.post('/crearUsuario', (req, res) => {
 app.get('/cargarDocente/:parametro', (req, res) => {
     const parametro = req.params.parametro;
     
-
     const query = "SELECT * FROM docente WHERE nombres LIKE ? or apellidos LIKE ? or identificacion LIKE ?";
     connection.query(query, [`${parametro}%`,`${parametro}%`,`${parametro}%`], (error, results) => {
         if (error) {
@@ -242,6 +241,20 @@ app.get('/cargarDocente/:parametro', (req, res) => {
         }
     });
 });
+
+app.get('/docenteById/:id', (req, res) => {
+    const idUser = req.params.id;
+    
+    const query = "SELECT * FROM docente WHERE 	id_usuario= ?";
+    connection.query(query, [idUser], (error, results) => {
+        if (error) {
+            res.status(500).json({ error: 'Error al obtener docente por Id' });
+        } else {
+            res.json(results);
+        }
+    });
+});
+
 app.get('/cargarDocenteContrato/:id', (req, res) => {
     const id = req.params.id;
     console.log(id);

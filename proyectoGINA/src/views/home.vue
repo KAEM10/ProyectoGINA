@@ -69,12 +69,14 @@ export default {
                     return response.json();
                 })
                 .then(data => {
-                    localStorage.token=data.token;
+                    
+                    localStorage.token=data.usuario.id_usuario
+                    localStorage.usuario = JSON.stringify(data.usuario);
                     if(localStorage.token!="undefined"){
                         if(data.usuario.rol=="coordinador"){
                             this.$router.push('periodoAcademico');
                         }else{
-                            this.$router.push('horario');
+                            this.$router.push('horarioDocente');
                         }
                     }
                 })
