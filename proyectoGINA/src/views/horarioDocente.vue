@@ -13,13 +13,13 @@
         <p><strong>Estado:</strong> {{ docenteById.estado }}</p>
         </div>
     </div>
-        <componentHorario :idDocente="selectedDoc" />
+        <componenteHorarioDocente />
     </div>
 </template>
 
 <script>
   import HeaderComponent from '../views/header.vue';
-  import componentHorario from '../views/componentHorario.vue';
+  import componenteHorarioDocente from '../views/componenteHorarioDocente.vue';
   import controller from '../Controllers/controllerHorario.js';
   import controllerPrograma from '../Controllers/controllerPrograma.js';
   import controllerDocente from '../Controllers/controllerDocente.js';
@@ -28,7 +28,7 @@
     mixins: [controller, controllerPrograma, controllerDocente],
     components: {
       HeaderComponent,
-      componentHorario,
+      componenteHorarioDocente,
     },
     props: {
     idDocente: {
