@@ -116,8 +116,9 @@ export default {
         },
         async actualizarPeriodo(periodo) {
             try {
-                const data = await updatePeriodo(periodo);
+                await updatePeriodo(periodo.id_periodo, periodo);
                 this.onEditOrCancel();
+                console.log(periodo);
             }
             catch (error) {
                 console.error('Error al actualizar periodo academico:', error);

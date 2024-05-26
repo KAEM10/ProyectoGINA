@@ -168,8 +168,8 @@ app.get('/cargarPeriodoAcademico/:nombre', (req, res) => {
 
 
 app.post('/crearPeriodoAcademico', (req, res) => {
-    const { nombre, fechaInicio, fechafin, estado } = req.body;
-    connection.query('INSERT INTO periodoacademico (nombre, fecha_inicio, fecha_final, estado) VALUES (?, ?, ?, ?)', [nombre, fechaInicio, fechafin, estado], (error, results) => {
+    const { nombre, fecha_inicio, fecha_fin, estado } = req.body;
+    connection.query('INSERT INTO periodoacademico (nombre, fecha_inicio, fecha_final, estado) VALUES (?, ?, ?, ?)', [nombre, fecha_inicio, fecha_fin, estado], (error, results) => {
         if (error) throw error;
         res.json({ message: 'periodoAcademico creado', id: results.insertId });
     });

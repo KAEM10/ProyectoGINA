@@ -78,11 +78,12 @@ export default {
         async agregarAmbiente() {
             try {
                 const nuevoAmbiente = {
+                    codigo: this.codigo,
                     nombre: this.nombre,
-                    capacidad: this.capacidad,
-                    estudiantes: this.estudiantes,
+                    
+                    tipo: this.tipo,
+                    capacidad_estudiantes: this.capacidad,
                     ubicacion: this.ubicacion,
-                    tipo: this.tipo
                 };
                 await createAmbiente(nuevoAmbiente);
                 this.limpiaCampos();
@@ -94,12 +95,11 @@ export default {
             try {
                 const ambienteActualizado = {
                     nombre: ambiente.nombre,
-                    capacidad: ambiente.capacidad,
-                    estudiantes: ambiente.estudiantes,
+                    tipo: ambiente.tipo,
+                    capacidad_estudiantes: ambiente.capacidad,
                     ubicacion: ambiente.ubicacion,
-                    tipo: ambiente.tipo
                 };
-                await updateAmbiente(ambiente.codigo, ambienteActualizado);
+                await updateAmbiente(ambiente.codigo, ambiente);
                 this.onEditOrCancel();
                 this.cargarAmbiente(ambiente.nombre);
             } catch (error) {
