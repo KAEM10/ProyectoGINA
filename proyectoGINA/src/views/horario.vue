@@ -6,7 +6,7 @@
       <div class="form-group">
         <label for="period-select">Seleccione período académico:</label>
         <select id="period-select" v-model="selectedPeriod">
-          <option v-for="period in periodos" :key="period.nombre" :value="period.fecha_inicio">
+          <option v-for="period in periodos" :key="period.nombre" :value="period.nombre">
             {{ period.nombre }}
           </option>
         </select>
@@ -30,7 +30,7 @@
         <input type="text" v-model="inputValue1" @input="filterOptionsProg" @click="toggleDropdownProg"
           placeholder="Escribe o selecciona..." />
         <select v-show="showDropdown1 && filteredOptionsProg.length > 0" v-model="selectedProg" @change="selectOptionProg">
-          <option v-for="period in filteredOptionsProg" :key="period.id_programa" :value="period.nombre">
+          <option v-for="period in filteredOptionsProg" :key="period.nombre" :value="period.nombre">
             {{ period.nombre }}
           </option>
         </select>
@@ -64,13 +64,16 @@
         </div>
       </div>
     </div>
+    
+    <div>{{ this.selectedPeriod }}</div>
+    <div>{{ this.selectedPeriodo() }}</div>
+    <div>{{ this.periodo.id_periodo }}</div>
+    <div>{{ this.selectedP }}</div>
     <div v-if="selectedPeriod && selectedAmb && selectedProg && selectedDoc && selectedComp">
-  <componentHorario :idDocente="selectedDoc" :idAmbiente="selectedAmb" :key="selectedPeriod + selectedAmb+selectedProg + selectedDoc +selectedComp" />
+  <componentHorario :idDocente="selectedDoc" :idAmbiente="selectedAmb" :idPeriodo="selectedP" :key="selectedPeriod + selectedAmb+selectedProg + selectedDoc +selectedComp" />
 </div>
 
-      <div>
-        <button @click="cargarAgregarHorario">Seleccionar</button>
-      </div>
+      
     </div>
   </div>
 </template>
@@ -115,6 +118,8 @@ export default {
       programas: [], // Asegúrate de cargar los programas desde el controller
       ambientes: [] ,// Asegúrate de cargar los ambientes desde el controller
       inputValue: '',
+      periodo: [],
+      selectedP:null ,
       selectedPeriod: null,
       selectedProgram: null,
       selectedAmb: null,
@@ -129,6 +134,11 @@ export default {
     };
   },
   methods: {
+    selectedPeriodo() {
+      // Devuelve el período completo basado en el ID seleccionado
+      this.periodo= this.periodos.find(period => period.nombre === this.selectedPeriod) || {};
+      this.selectedP=this.periodo.id_periodo
+    },
     toggleDropdownProg() {
       this.showDropdown1 = !this.showDropdown1;
       if (this.showDropdown1) {
@@ -198,7 +208,7 @@ export default {
       this.inputValue = this.selectedAmb;
       this.showDropdown = false;
     },
-    cargarAgregarHorario() {
+    insertarHorario() {
       // Pasa los datos necesarios como parámetros de la ruta
       this.$router.push({
         path: '/agregarHorario',

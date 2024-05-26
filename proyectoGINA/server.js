@@ -200,6 +200,27 @@ app.post('/crearDocente', (req, res) => {
 });
 
 
+app.post('/crearHorario', (req, res) => {
+    const {idPeriodo, idDocente, idCompetencia,idAmbiente, dia, horaInicio, horaFin } = req.body;
+    console.log(idPeriodo, idDocente)
+    connection.query(
+        'INSERT INTO horario (id_periodo, id_docente, id_competencia,id_ambiente, dia, hora_inicio, hora_fin) VALUES (?, ?, ?, ?, ?, ?, ?)', 
+        [idPeriodo, idDocente, idCompetencia,idAmbiente, dia, horaInicio, horaFin], 
+        (error, results) => {
+            if (error) {
+                // Manejar error de duplicación
+                if (error.code === 'ER_DUP_ENTRY') {
+                    return res.status(409).json({ message: 'El horario ya existe' });
+                }
+                // Manejar otros tipos de errores
+                return res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+            }
+            res.status(201).json({ message: 'Horario creado', id: results.insertId });
+        }
+    );
+});
+
+
 app.post('/crearUsuario', (req, res) => {
     const {usuario,contra } = req.body;
     connection.query('INSERT INTO usuario (usuario_login,usuario_pwd,rol) VALUES (?, ?, ?)', [usuario,contra,'docente'], (error, results) => {

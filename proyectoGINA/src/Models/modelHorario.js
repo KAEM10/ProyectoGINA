@@ -24,3 +24,7 @@ export const getHorarioDoc = async (id) => {
     const response = await axios.get(`${API_URL}/horarioOcupadoDoc/${id}`);
     return response.data;
 };
+export const createHorario = async (horario) => {
+    const response = await axios.post(`${API_URL}/crearHorario`, horario);
+    return response.data;
+  };

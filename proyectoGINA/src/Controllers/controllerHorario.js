@@ -5,6 +5,7 @@ import {
     getHorario,
     getHorarioDoc,
     getDocenteContrato,
+    createHorario
 } from '../Models/modelHorario';
 
 export default {
@@ -61,7 +62,15 @@ export default {
             } catch (error) {
                 console.error('Error al cargar periodos:', error);
             }
-        }
+        },
+        async agregarHorario(horario) {
+            try {
+              await createHorario(horario);
+              alert("Horario creado con éxito");
+            } catch (error) {
+               console.log(error)
+            }
+          },
 
         
         

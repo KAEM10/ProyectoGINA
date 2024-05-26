@@ -11,11 +11,9 @@
           @click="toggleSelection(day, hour)"></div>
       </div>
     </div>
+    <div>ss{{ idPeriodo }}</div>
     <div>
-      <p>{{ idAmbiente }}</p>
-    </div>
-    <div>
-      <p>{{ idDocente }}</p>
+      <button @click="enviarDatos">Seleccionar</button>
     </div>
   </div>
 </template>
@@ -31,6 +29,10 @@ export default {
       required: true
     },
     idDocente: {
+      type: String,
+      required: true
+    },
+    idPeriodo: {
       type: String,
       required: true
     }
@@ -66,23 +68,54 @@ export default {
   },
   methods: {
     countWeeklyHours() {
-      const occupiedCells = [...this.selectedCells, ...this.getOccupiedCells()];
+      const occupiedCells = [...this.selectedCells, ...this.getOccupiedCells2()];
       const weeklyHours = occupiedCells.length * 2; // Multiplicar por 2 ya que cada celda representa 2 horas
       return weeklyHours;
     },
-    countDailyHours() {
-      const occupiedCells = [...this.selectedCells, ...this.getOccupiedCells()];
-      const dailyHours = {}; // Objeto para almacenar las horas diarias
-      occupiedCells.forEach(cell => {
-        if (!dailyHours[cell.day]) {
-          dailyHours[cell.day] = 0; // Inicializar las horas diarias para cada día en 0
+    contarHorasOcupadasPorDia() {
+      const horarios = this.horariosOcupados2;
+      const horasPorDia = {};
+
+      // Iterar sobre los horarios ocupados y calcular las horas por día
+      console.log("Calculando horas ocupadas por día desde horarios ocupados...");
+      horarios.forEach(horario => {
+        const dia = horario.dia;
+        const horaInicio = new Date(`2000-01-01T${horario.hora_inicio}`);
+        const horaFin = new Date(`2000-01-01T${horario.hora_fin}`);
+        const duracionHoras = (horaFin - horaInicio) / (1000 * 60 * 60); // Convertir de milisegundos a horas
+
+        if (horasPorDia[dia]) {
+          horasPorDia[dia] += duracionHoras;
+        } else {
+          horasPorDia[dia] = duracionHoras;
+        }
+      });
+
+      // Iterar sobre las celdas seleccionadas y agregar las horas por día
+      console.log("Calculando horas ocupadas por celda seleccionada...");
+      const selectedCellsArray = Array.from(this.selectedCells); // Convertir el Proxy en un array
+      selectedCellsArray.forEach(cell => {
+        const dia = cell.day;
+        const duracionHoras = 2; // Cada celda representa 2 horas
+
+        if (!horasPorDia[dia]) {
+          horasPorDia[dia] = 0; // Inicializar las horas diarias para cada día en 0 si no existe
         }
 
-        dailyHours[cell.day] += 2; // Sumar 2 horas por cada celda seleccionada
-        console.log(dailyHours[cell.day])
+        horasPorDia[dia] += duracionHoras; // Sumar la duración de la franja horaria al total de horas para ese día
+        console.log(`Agregadas ${duracionHoras} horas para ${dia} (${cell.hour})`);
       });
-      return dailyHours;
+
+      // Imprimir los resultados de las horas por día
+      console.log("Resultados de las horas ocupadas por día:");
+      for (const dia in horasPorDia) {
+        console.log(`Horas ocupadas en ${dia}: ${horasPorDia[dia]}`);
+      }
+
+      console.log("Horas ocupadas por día calculadas con éxito.");
+      return horasPorDia;
     },
+
     isWeeklyHoursExceeded() {
       if (this.docenteCT === "PT") {
         this.horasMaximasSemanales = 32;
@@ -93,14 +126,22 @@ export default {
       return this.countWeeklyHours() > this.horasMaximasSemanales; // Verificar si las horas semanales exceden 40
     },
     isDailyHoursExceeded(day) {
-      const dailyHours = this.countDailyHours();
+      const dailyHours = this.contarHorasOcupadasPorDia();
       if (this.docenteCT === "PT") {
         this.horasMaximasDiarias = 8;
       }
       if (this.docenteCT === "CNT") {
         this.horasMaximasDiarias = 10;
       }
+      console.log(`Verificando si las horas diarias para ${day} exceden el máximo permitido: ${dailyHours[day]} > ${this.horasMaximasDiarias}`);
       return dailyHours[day] > this.horasMaximasDiarias;
+    },
+    getOccupiedCells2() {
+      const occupiedCells = [];
+      this.horariosOcupados2.forEach(horario => {
+        occupiedCells.push({ day: horario.dia, hour: this.formatHour(horario.hora_inicio, horario.hora_fin) });
+      });
+      return occupiedCells;
     },
     getOccupiedCells() {
       const occupiedCells = [];
@@ -166,41 +207,74 @@ export default {
       return hourToNumber(hour) >= hourToNumber(startHour) && hourToNumber(hour) < hourToNumber(endHour);
     },
 
-    
-toggleSelection(day, hour) {
-  // Verificar si la celda está ocupada
-  if (!this.isOccupied(day, hour)) {
-    // Verificar si ya se ha alcanzado el límite de 3 bloques de dos horas
-    if (this.selectedCells.length >= 6) {
-      alert("Se han excedido las horas semanales permitidas.");
-      return; // No permitir más selecciones si se alcanzó el límite
-    }
+    toggleSelection(day, hour) {
+      // Verificar si la celda está ocupada
+      if (!this.isOccupied(day, hour)) {
+        // Verificar si la celda ya está seleccionada
+        const cellIndex = this.selectedCells.findIndex(cell => cell.day === day && cell.hour === hour);
+        if (cellIndex >= 0) {
+          // Si la celda ya está seleccionada, deseleccionarla
+          this.selectedCells.splice(cellIndex, 1);
+        } else {
+          // Si no está seleccionada, agregarla a las selecciones
+          this.selectedCells.push({ day, hour });
 
-    // Verificar si ya se excedió el límite de horas diarias para este día
-    if (this.isDailyHoursExceeded(day)) {
-      alert("Se han excedido las horas diarias permitidas para este día.");
-      return; // No permitir más selecciones si se excedieron las horas diarias para este día
-    }
+          // Verificar si se excedió el límite de horas diarias para este día
+          if (this.isDailyHoursExceeded(day)) {
+            // Si se excede el límite, eliminar la última selección y mostrar una alerta
+            this.selectedCells.pop();
+            alert("Se han excedido las horas diarias permitidas para este día.");
+            return;
+          }
 
-    // Verificar si la celda ya está seleccionada
-    const cellIndex = this.selectedCells.findIndex(cell => cell.day === day && cell.hour === hour);
-    if (cellIndex >= 0) {
-      // Si la celda ya está seleccionada, deseleccionarla
-      this.selectedCells.splice(cellIndex, 1);
-    } else {
-      // Si no está seleccionada, agregarla a las selecciones
-      this.selectedCells.push({ day, hour });
-    }
-  }
-},
+          // Verificar si ya se ha alcanzado el límite de 3 bloques de dos horas
+          if (this.selectedCells.length >= 6 && this.isWeeklyHoursExceeded()) {
+            // Si se excede el límite, eliminar la última selección y mostrar una alerta
+            this.selectedCells.pop();
+            alert("Se han excedido las horas semanales permitidas.");
+            return;
+          }
+        }
+      }
+    },
+    enviarDatos() {
+      const franjasHorarias = this.selectedCells.map(cell => {
+        const [horaInicio, horaFin] = cell.hour.split(' - ').map(h => {
+          const [time, period] = h.split(' ');
+          let [hours, minutes] = time.split(':').map(Number);
+          if (period === 'PM' && hours !== 12) hours += 12;
+          if (period === 'AM' && hours === 12) hours = 0;
+          return `${String(hours).padStart(2, '0')}:${String(minutes || 0).padStart(2, '0')}:00`;
+        });
+        return {
+          dia: cell.day,
+          horaInicio,
+          horaFin
+        };
+      });
 
+      const horarios = franjasHorarias.map(franja => ({
+        idPeriodo: this.idPeriodo,
+        idDocente: this.idDocente,
+        
+        idCompetencia: 1,
+        idAmbiente: this.idAmbiente,
+        
+        ...franja
+      }));
+
+      // Iterar sobre cada objeto horario y llamar al método de inserción en la base de datos
+      horarios.forEach(horario => {
+         
+        this.agregarHorario(horario);
+      });
+      // Aquí puedes enviar 'horarios' a la base de datos
+    }
   },
   mounted() {
     this.obtenerDocenteContrato(this.idDocente);
-
   }
 };
-
 </script>
 
 <style scoped>
