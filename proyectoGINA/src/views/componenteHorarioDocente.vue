@@ -1,6 +1,5 @@
 <template>
   <div>
-    <div>{{ this.horariosOcupados2 }}</div>
     <div class="schedule">
       <div class="header">
         <div class="cell"></div>
@@ -9,11 +8,13 @@
       <div class="row" v-for="(hour, index) in hours" :key="index">
         <div class="cell">{{ hour }}</div>
         <div class="cell" v-for="(day, dayIndex) in days" :key="dayIndex" :class="cellClasses(day, hour)">
+          <template
+            v-for="horario in horariosOcupadosDoc.filter(h => h.dia === day && isBetween(hour, h.hora_inicio, h.hora_fin))">
+            {{ horario.codigo }}-{{ horario.nombre }}
+          </template>
         </div>
+
       </div>
-    </div>
-    <div>
-      <button @click="enviarDatos">Seleccionar</button>
     </div>
   </div>
 </template>
@@ -42,7 +43,7 @@ export default {
     idDocente: {
       handler(newVal) {
         if (newVal) {
-          this.obtenerHorariosOcupadosDocente(newVal);
+          this.obtenerHorariosOcupadosVistaDoc(newVal);
         }
       },
       immediate: true
@@ -64,24 +65,15 @@ export default {
       ];
     },
     getOccupiedCells() {
-      console.log(this.horariosOcupados2)
+      console.log(this.horariosOcupadosDoc)
       const occupiedCells = [];
-      this.horariosOcupados2.forEach(horario => {
+      this.horariosOcupadosDoc.forEach(horario => {
         occupiedCells.push({ day: horario.dia, hour: this.formatHour(horario.hora_inicio, horario.hora_fin) });
       });
       return occupiedCells;
     },
     cellClasses(day, hour) {
-      const schedule2 = this.horariosOcupados2.find(item => item.dia === day && this.formatHour(item.hora_inicio, item.hora_fin) === hour);
-      const schedule1 = this.horariosOcupados.find(item => item.dia === day && this.formatHour(item.hora_inicio, item.hora_fin) === hour);
 
-      if (schedule2) {
-        console.log("Horario ocupado 2:", schedule2);
-      }
-
-      if (schedule1) {
-        console.log("Horario ocupado 1:", schedule1);
-      }
 
       return {
         'occupied-brown': this.isOccupied(day, hour) === 'secondList'
@@ -89,9 +81,8 @@ export default {
     },
 
     isOccupied(day, hour) {
-      console.log("hpta")
       // Verifica si el horario está ocupado en la segunda lista
-      const isOccupiedInSecondList = this.horariosOcupados2.some(horario =>
+      const isOccupiedInSecondList = this.horariosOcupadosDoc.some(horario =>
         horario.dia === day && this.isBetween(hour, horario.hora_inicio, horario.hora_fin)
       );
 
@@ -112,11 +103,6 @@ export default {
       return hourToNumber(hour) >= hourToNumber(startHour) && hourToNumber(hour) < hourToNumber(endHour);
     },
 
-    enviarDatos() {
-      // Aquí puedes implementar la lógica para enviar los datos seleccionados.
-      // Por ejemplo, podrías llamar a una función para procesar los datos y enviarlos al backend.
-      console.log("Datos seleccionados:", this.selectedCells);
-    }
   },
 };
 </script>
@@ -165,6 +151,6 @@ export default {
 }
 
 .cell.occupied-brown {
-  background-color: #8b4513;
+  background-color: aquamarine;
 }
 </style>

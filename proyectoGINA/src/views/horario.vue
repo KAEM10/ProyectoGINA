@@ -43,7 +43,7 @@
             <select v-show="showDropdown2 && filteredOptionsDoc.length > 0" v-model="selectedDoc"
               @change="selectOptionDoc">
               <option v-for="period in filteredOptionsDoc" :key="period.id_docente" :value="period.id_docente">
-                {{ period.id_docente }}
+                {{ period.nombres }}
               </option>
             </select>
           </div>
@@ -179,7 +179,7 @@ export default {
     filterOptionsDoc() {
       const searchTerm = this.inputValue2.toLowerCase();
       this.filteredOptionsDoc = this.docentes.filter(period =>
-        period.id_docente.toLowerCase().startsWith(searchTerm)
+        period.nombres.toLowerCase().startsWith(searchTerm)
       );
       this.showDropdown2 = true; // Mostrar el dropdown cuando haya coincidencias
     },

@@ -5,7 +5,8 @@ import {
     getHorario,
     getHorarioDoc,
     getDocenteContrato,
-    createHorario
+    createHorario,
+    listaHoras
 } from '../Models/modelHorario';
 
 export default {
@@ -59,7 +60,6 @@ export default {
                 const data = await getDocenteContrato(id);
                 this.docenteContrato = data[0];
                 this.docenteCT=this.docenteContrato.tipo_contrato;
-                console.log("Tipo de contrato:", this.docenteCT);
             } catch (error) {
                 console.error('Error al cargar periodos:', error);
             }
@@ -68,7 +68,6 @@ export default {
             try {
                 const data = await getHorarioDoc(id);
                 this.horariosOcupados2=data;
-                console.log(this.horariosOcupados2)
             } catch (error) {
                 console.error('Error al cargar periodos:', error);
             }
