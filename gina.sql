@@ -7,7 +7,6 @@ DROP TABLE IF EXISTS docente;
 DROP TABLE IF EXISTS periodoAcademico;
 DROP TABLE IF EXISTS usuario;
 
-
 CREATE TABLE periodoAcademico (
     id_periodo INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(255) NOT NULL,
@@ -18,8 +17,8 @@ CREATE TABLE periodoAcademico (
 
 CREATE TABLE usuario(
     id_usuario INT PRIMARY KEY AUTO_INCREMENT,
-    usuario_login VARCHAR(100) not null,
-    usuario_pwd VARCHAR(50) not null,
+    usuario_login VARCHAR(100) NOT NULL,
+    usuario_pwd VARCHAR(50) NOT NULL,
     rol VARCHAR(50) NOT NULL CHECK (rol IN ('docente', 'coordinador'))
 );
 
@@ -30,7 +29,6 @@ CREATE TABLE ambienteAprendizaje (
     capacidad_estudiantes INT NOT NULL,
     ubicacion VARCHAR(255) NOT NULL
 );
-
 
 CREATE TABLE programa (
     id_programa INT AUTO_INCREMENT PRIMARY KEY,
@@ -45,13 +43,12 @@ CREATE TABLE competencia (
     estado VARCHAR(50) NOT NULL CHECK (estado IN ('activo', 'inactivo'))
 );
 
-
 CREATE TABLE programaCompetencia (
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_programa INT,
     id_competencia INT,
-    FOREIGN KEY (id_programa) REFERENCES programa(id_programa),
-    FOREIGN KEY (id_competencia) REFERENCES competencia(id_competencia)
+    FOREIGN KEY (id_programa) REFERENCES programa(id_programa) ON DELETE CASCADE,
+    FOREIGN KEY (id_competencia) REFERENCES competencia(id_competencia) ON DELETE CASCADE
 );
 
 CREATE TABLE docente (
@@ -65,7 +62,7 @@ CREATE TABLE docente (
     area_perteneciente VARCHAR(255) NOT NULL,
     estado VARCHAR(50) NOT NULL CHECK (estado IN ('activo', 'inactivo')),
     id_usuario INT,
-    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
 );
 
 CREATE TABLE horario (
@@ -77,8 +74,8 @@ CREATE TABLE horario (
     dia VARCHAR(255),
     hora_inicio TIME,
     hora_fin TIME,
-    FOREIGN KEY (id_periodo) REFERENCES periodoAcademico(id_periodo),
-    FOREIGN KEY (id_docente) REFERENCES docente(id_docente),
-    FOREIGN KEY (id_competencia) REFERENCES competencia(id_competencia),
-    FOREIGN KEY (id_ambiente) REFERENCES ambienteAprendizaje(codigo)
+    FOREIGN KEY (id_periodo) REFERENCES periodoAcademico(id_periodo) ON DELETE CASCADE,
+    FOREIGN KEY (id_docente) REFERENCES docente(id_docente) ON DELETE CASCADE,
+    FOREIGN KEY (id_competencia) REFERENCES competencia(id_competencia) ON DELETE CASCADE,
+    FOREIGN KEY (id_ambiente) REFERENCES ambienteAprendizaje(codigo) ON DELETE CASCADE
 );
